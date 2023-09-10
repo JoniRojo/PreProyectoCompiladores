@@ -13,6 +13,7 @@ typedef struct Data{
     enum Enum flag;
     char name[MAX];
     char type[MAX];
+
 }Data;
 
 #endif //PRE_PROYECTO_AUXILIARY_H

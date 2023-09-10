@@ -3,13 +3,13 @@
 
 #include "auxiliary.h"
 
-typedef struct NodoSym{
+typedef struct nodoSym{
     struct Data info;
-    struct NodoSym *next;
-} NodoSym;
+    struct nodoSym *next;
+} nodoSym;
 
 typedef struct tableSymbol{
-    NodoSym *head;
+    nodoSym *head;
 }tableSymbol;
 
 /*
