@@ -26,18 +26,19 @@ digito [0-9]
 															return BOOL;}
 
 "int"												{ 
-															printf("tint: %s\n",yytext);
-															return tint;}
+															printf("TINT: %s\n",yytext);
+															return TINT;}
 
 "bool"                       { 
-															printf("tbool : %s\n",yytext); 
-															return tbool;}
+															printf("TBOOL : %s\n",yytext);
+															return TBOOL;}
                        
 {digito}+                     { 
                                 printf("INT : %d\n",atoi(yytext)); 
                                 return INT;}
 
-{letra}({letra}|{digito})*    { 
+{letra}({letra}|{digito})*    { yylval.cadena =(char *) malloc(sizeof(yytext)*yyleng);
+                                strcpy(yylval.cadena,yytext);
                                 printf("ID : %s\n",yytext);
                                 return ID;}
 

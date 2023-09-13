@@ -798,15 +798,15 @@ case 3:
 YY_RULE_SETUP
 #line 28 "calc-lexico.l"
 { 
-															printf("tint: %s\n",yytext);
-															return tint;}
+															printf("TINT: %s\n",yytext);
+															return TINT;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 32 "calc-lexico.l"
 { 
-															printf("tbool : %s\n",yytext); 
-															return tbool;}
+															printf("TBOOL : %s\n",yytext);
+															return TBOOL;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
@@ -818,34 +818,35 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 40 "calc-lexico.l"
-{ 
+{ yylval.cadena =(char *) malloc(sizeof(yytext)*yyleng);
+                                strcpy(yylval.cadena,yytext);
                                 printf("ID : %s\n",yytext);
                                 return ID;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 44 "calc-lexico.l"
+#line 45 "calc-lexico.l"
 {  printf("%s\n",yytext);
                                   return TMENOS;}    
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 47 "calc-lexico.l"
+#line 48 "calc-lexico.l"
 {  printf("%s\n",yytext);
                                   return *yytext;}
 	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 50 "calc-lexico.l"
+#line 51 "calc-lexico.l"
 ; /* ignore all the rest */
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 52 "calc-lexico.l"
+#line 53 "calc-lexico.l"
 ECHO;
 	YY_BREAK
-#line 849 "lex.yy.c"
+#line 850 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1862,7 +1863,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 52 "calc-lexico.l"
+#line 53 "calc-lexico.l"
 
 
 void yyerror(){

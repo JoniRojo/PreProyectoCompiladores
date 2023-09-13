@@ -72,9 +72,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "symbolTable.h"
-#include <symbolTable.c>
-symbolTable aux;
+#include "symboltable.h"
+#include "symboltable.c"
+tableSymbol aux;
 
 
 #line 81 "calc-sintaxis.tab.c"
@@ -109,11 +109,11 @@ enum yysymbol_kind_t
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
   YYSYMBOL_INT = 3,                        /* INT  */
-  YYSYMBOL_ID = 4,                         /* ID  */
-  YYSYMBOL_TMENOS = 5,                     /* TMENOS  */
-  YYSYMBOL_BOOL = 6,                       /* BOOL  */
-  YYSYMBOL_tint = 7,                       /* tint  */
-  YYSYMBOL_tbool = 8,                      /* tbool  */
+  YYSYMBOL_BOOL = 4,                       /* BOOL  */
+  YYSYMBOL_TINT = 5,                       /* TINT  */
+  YYSYMBOL_TBOOL = 6,                      /* TBOOL  */
+  YYSYMBOL_ID = 7,                         /* ID  */
+  YYSYMBOL_TMENOS = 8,                     /* TMENOS  */
   YYSYMBOL_RETURN = 9,                     /* RETURN  */
   YYSYMBOL_10_ = 10,                       /* '+'  */
   YYSYMBOL_11_ = 11,                       /* '*'  */
@@ -518,9 +518,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    34,    34,    34,    34,    37,    38,    40,    41,    43,
-      54,    57,    66,    68,    70,    72,    74,    77,    78,    81,
-      82
+       0,    35,    35,    35,    35,    38,    39,    41,    42,    44,
+      55,    58,    67,    69,    71,    73,    75,    78,    79,    82,
+      83
 };
 #endif
 
@@ -536,8 +536,8 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "INT", "ID", "TMENOS",
-  "BOOL", "tint", "tbool", "RETURN", "'+'", "'*'", "'='", "';'", "'('",
+  "\"end of file\"", "error", "\"invalid token\"", "INT", "BOOL", "TINT",
+  "TBOOL", "ID", "TMENOS", "RETURN", "'+'", "'*'", "'='", "';'", "'('",
   "')'", "$accept", "prog", "$@1", "$@2", "assignS", "sentS", "sent",
   "assign", "expr", "type", "VALOR", YY_NULLPTR
 };
@@ -563,10 +563,10 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -16,     8,     2,   -16,   -16,   -16,    24,   -16,    14,     4,
-       1,    -3,   -16,   -16,    18,     1,   -16,   -16,     1,    12,
-     -16,   -16,   -16,    -1,    16,     9,     1,     1,     1,   -16,
-      21,   -16,   -16,    25,    25,   -16,   -16
+     -16,     6,    -4,   -16,   -16,   -16,    21,   -16,    10,    23,
+       1,    22,   -16,   -16,    24,     1,   -16,   -16,     1,     8,
+     -16,   -16,   -16,    29,    12,    -1,     1,     1,     1,   -16,
+      -5,   -16,   -16,    13,    13,   -16,   -16
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -583,7 +583,7 @@ static const yytype_int8 yydefact[] =
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -16,   -16,   -16,   -16,   -16,   -16,    26,    29,   -15,   -16,
+     -16,   -16,   -16,   -16,   -16,   -16,    26,    28,   -15,   -16,
       15
 };
 
@@ -599,27 +599,27 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      24,     9,    16,    25,    16,    17,    10,    17,     3,     4,
-       5,    33,    34,    35,    26,    18,    15,    26,    14,    27,
-      28,    26,    27,    28,    32,    29,    27,    28,     9,    31,
-      23,     4,     5,    10,    36,    13,    28,    22,    30
+      24,     4,     5,    25,    16,    17,     3,    26,    36,    27,
+      28,    33,    34,    35,    32,    18,    26,    14,    27,    28,
+      26,    29,    27,    28,    28,    31,     4,     5,     9,     9,
+      10,    10,    16,    17,    13,    15,    23,    22,    30
 };
 
 static const yytype_int8 yycheck[] =
 {
-      15,     4,     3,    18,     3,     6,     9,     6,     0,     7,
-       8,    26,    27,    28,     5,    14,    12,     5,     4,    10,
-      11,     5,    10,    11,    15,    13,    10,    11,     4,    13,
-      12,     7,     8,     9,    13,     6,    11,    11,    23
+      15,     5,     6,    18,     3,     4,     0,     8,    13,    10,
+      11,    26,    27,    28,    15,    14,     8,     7,    10,    11,
+       8,    13,    10,    11,    11,    13,     5,     6,     7,     7,
+       9,     9,     3,     4,     6,    12,    12,    11,    23
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    17,    18,     0,     7,     8,    20,    23,    25,     4,
-       9,    21,    22,    23,     4,    12,     3,     6,    14,    24,
-      26,    19,    22,    12,    24,    24,     5,    10,    11,    13,
+       0,    17,    18,     0,     5,     6,    20,    23,    25,     7,
+       9,    21,    22,    23,     7,    12,     3,     4,    14,    24,
+      26,    19,    22,    12,    24,    24,     8,    10,    11,    13,
       26,    13,    15,    24,    24,    24,    13
 };
 
@@ -1100,31 +1100,31 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* $@1: %empty  */
-#line 34 "calc-sintaxis.y"
-      {aux->head = NULL; }
+#line 35 "calc-sintaxis.y"
+      {aux.head = NULL; }
 #line 1106 "calc-sintaxis.tab.c"
     break;
 
   case 3: /* $@2: %empty  */
-#line 34 "calc-sintaxis.y"
-                                          {printTableSymbol(&aux); }
+#line 35 "calc-sintaxis.y"
+                                         {printTableSymbol(aux); }
 #line 1112 "calc-sintaxis.tab.c"
     break;
 
   case 4: /* prog: $@1 assignS sentS $@2  */
-#line 34 "calc-sintaxis.y"
-                                                                    { printf("No hay errores \n"); }
+#line 35 "calc-sintaxis.y"
+                                                                  { printf("No hay errores \n"); }
 #line 1118 "calc-sintaxis.tab.c"
     break;
 
   case 9: /* sent: ID '=' expr ';'  */
-#line 43 "calc-sintaxis.y"
-                               {int n = existSymbol(&aux,(yyvsp[-3].cadena));
+#line 44 "calc-sintaxis.y"
+                               {int n = existSymbol(aux,(yyvsp[-3].cadena));
                                if(n == 0){
                                 printf("La variable no esta declarada");
                                } else {
                                 nodoSymbol symbol;
-                                symbol.info = searchSymbol(&aux,(yyvsp[-3].cadena));
+                                symbol.info = searchSymbol(aux,(yyvsp[-3].cadena));
                                 printf("La variable esta declarada");
                                }
 
@@ -1133,9 +1133,9 @@ yyreduce:
     break;
 
   case 11: /* assign: type ID '=' VALOR ';'  */
-#line 57 "calc-sintaxis.y"
+#line 58 "calc-sintaxis.y"
                                {Data *new_node = (Data*)malloc(sizeof(Data));
-                                new_node->type = (yyvsp[-4].tint);
+                                new_node->type = (yyvsp[-4].numero);
                                 new_node->name = (yyvsp[-3].cadena);
                                 new_node->flag = TAG_VARIABLE;
                                 insertSymbol(&aux,new_node);
@@ -1144,15 +1144,15 @@ yyreduce:
 #line 1145 "calc-sintaxis.tab.c"
     break;
 
-  case 17: /* type: tint  */
-#line 77 "calc-sintaxis.y"
-            {(yyval.tint) = tint;}
+  case 17: /* type: TINT  */
+#line 78 "calc-sintaxis.y"
+            {(yyval.numero) = 0;}
 #line 1151 "calc-sintaxis.tab.c"
     break;
 
-  case 18: /* type: tbool  */
-#line 78 "calc-sintaxis.y"
-             {(yyval.tint) = tbool;}
+  case 18: /* type: TBOOL  */
+#line 79 "calc-sintaxis.y"
+             {(yyval.numero) = 1;}
 #line 1157 "calc-sintaxis.tab.c"
     break;
 
@@ -1350,7 +1350,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 85 "calc-sintaxis.y"
+#line 86 "calc-sintaxis.y"
 
 
 

@@ -2,9 +2,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "symbolTable.h"
-#include <symbolTable.c>
-symbolTable aux;
+#include "symboltable.h"
+#include "symboltable.c"
+tableSymbol aux;
 
 %}
 
@@ -15,23 +15,24 @@ int numero;
 }
 
 %token <numero> INT
+%token <numero> BOOL
+%token TINT
+%token TBOOL
 %token <cadena> ID
 %token TMENOS
-%token <numero> BOOL
-%token tint
-%token tbool
 %token RETURN
-%token type
 
 %type expr
 %type VALOR
+%type <numero> type
+
 
 %left '+' TMENOS 
 %left '*'
  
 %%
  
-prog: {aux->head = NULL; } assignS sentS  {printTableSymbol(&aux); }{ printf("No hay errores \n"); }
+prog: {aux.head = NULL; } assignS sentS  {printTableSymbol(aux); }{ printf("No hay errores \n"); }
     ;
 
 assignS: assign             
@@ -40,12 +41,12 @@ assignS: assign
 sentS: sent  
      | sentS sent
 
-sent: ID '=' expr ';'          {int n = existSymbol(&aux,$1);
+sent: ID '=' expr ';'          {int n = existSymbol(aux,$1);
                                if(n == 0){
                                 printf("La variable no esta declarada");
                                } else {
                                 nodoSymbol symbol;
-                                symbol.info = searchSymbol(&aux,$1);
+                                symbol.info = searchSymbol(aux,$1);
                                 printf("La variable esta declarada");
                                }
 
@@ -74,8 +75,8 @@ expr: VALOR
     | '(' expr ')' 
 
 
-type : tint {$$ = "tint";}
-     | tbool {$$ = "tbool";}
+type : TINT {$$ = 0;}
+     | TBOOL {$$ = 1;}
      ;
 
 VALOR : INT
