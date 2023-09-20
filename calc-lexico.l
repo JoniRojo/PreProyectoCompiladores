@@ -14,44 +14,52 @@
 letra [a-zA-Z]      
 digito [0-9]
 
-
 %%
 
-"return"										{
-															printf("RETURN: %s\n",yytext);
-															return RETURN;}
+"return"						{
+                                 printf("RETURN: %s\n",yytext);
+								 return RETURN;
+								}
 
 "true"							{
-															printf("BOOL: %s\n",yytext);
-															return BOOLT;}
+								 printf("BOOL: %s\n",yytext);
+	  							 return BOOLT;
+	  							}
 
 
 "false"							{
-															printf("BOOL: %s\n",yytext);
-															return BOOLF;}
+							     printf("BOOL: %s\n",yytext);
+								 return BOOLF;
+								}
 
-"int"												{ 
-															printf("TINT: %s\n",yytext);
-															return TINT;}
+"int"							{
+							     printf("TINT: %s\n",yytext);
+							     return TINT;
+							    }
 
-"bool"                       { 
-															printf("TBOOL : %s\n",yytext);
-															return TBOOL;}
+"bool"                          {
+								 printf("TBOOL : %s\n",yytext);
+								 return TBOOL;
+								}
                        
-{digito}+                     { 
-                                printf("INT : %d\n",atoi(yytext)); 
-                                return INT;}
+{digito}+                       {
+                                 printf("INT : %d\n",atoi(yytext));
+                                 return INT;
+                                }
 
-{letra}({letra}|{digito})*    { yylval.cadena =(char *) malloc(sizeof(yytext)*yyleng);
-                                strcpy(yylval.cadena,yytext);
-                                printf("ID : %s\n",yytext);
-                                return ID;}
+{letra}({letra}|{digito})*      {yylval.cadena =(char *) malloc(sizeof(yytext)*yyleng);
+                                 strcpy(yylval.cadena,yytext);
+                                 printf("ID : %s\n",yytext);
+                                 return ID;
+                                }
 
-"-"                       {  printf("%s\n",yytext);
-                                  return TMENOS;}    
+"-"                             {printf("%s\n",yytext);
+                                 return TMENOS;
+                                }
 
-[+*;()=]                   {  printf("%s\n",yytext);
-                                  return *yytext;}
+[+*;()=]                        {printf("%s\n",yytext);
+                                 return *yytext;
+                                }
 
 .|\n                          ; /* ignore all the rest */
 
@@ -67,6 +75,5 @@ int main(int argc,char *argv[]){
 		yyin = fopen(argv[0],"r");
 	else
 		yyin = stdin;
-
 	yyparse();
 }

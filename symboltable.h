@@ -4,7 +4,7 @@
 #include "auxiliary.h"
 
 typedef struct nodoSymbol{
-    struct Data info;
+    struct Data *info;
     struct nodoSymbol *next;
 } nodoSymbol;
 

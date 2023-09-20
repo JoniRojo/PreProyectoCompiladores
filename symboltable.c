@@ -9,9 +9,9 @@
 void insertSymbol(tableSymbol *table,Data *symbol){
 
     nodoSymbol *new_node = (nodoSymbol *)malloc(sizeof(nodoSymbol));
-    new_node->info.flag = symbol->flag;
-    new_node->info.name = symbol->name;
-    new_node->info.type = symbol->type;
+    new_node->info->flag = symbol->flag;
+    new_node->info->name = symbol->name;
+    new_node->info->type = symbol->type;
     new_node->next = NULL;
 
     if(table->head == NULL){
@@ -31,7 +31,7 @@ int existSymbol(tableSymbol table,char* name){
     } else {
         nodoSymbol *aux = table.head;
         while(aux != NULL){
-            int resultado = strcmp(aux->info.name, name);
+            int resultado = strcmp(aux->info->name, name);
             if(resultado == 0){
                 return 1;
             }
@@ -41,10 +41,10 @@ int existSymbol(tableSymbol table,char* name){
     return 0;
 }
 
-Data searchSymbol(tableSymbol table,char name[]){
+Data* searchSymbol(tableSymbol table,char name[]){
     nodoSymbol *aux = table.head;
     while(aux != NULL){
-        if(aux->info.name == name){
+        if(aux->info->name == name){
             return aux->info;
         }
         aux = aux->next;
@@ -66,7 +66,7 @@ nodoSymbol* searchSymbol(tableSymbol table, char name[]){
 void printTableSymbol(tableSymbol table) {
     nodoSymbol *entry = table.head;
     while (entry != NULL) {
-        printf("Nombre: %s, Tipo: %d\n", entry->info.name,entry->info.type);
+        printf("Nombre: %s, Tipo: %d\n", entry->info->name,entry->info->type);
         entry = entry->next;
     }
 }

@@ -14,7 +14,7 @@ tableSymbol aux;
 {
 char* cadena;
 int numero;
-nodeTree *tree;
+struct nodeTree *tree;
 }
 
 %token <numero> INT
@@ -28,7 +28,7 @@ nodeTree *tree;
 
 %type <tree> expr
 %type <tree> VALOR
-%type <tree> type
+%type <numero> type
 %type <tree> sent
 %type <tree> sentS
 %type <tree> assign
@@ -48,26 +48,17 @@ prog: {aux.head = NULL;} assignS sentS {
        nodeTree *root = createTree(data_PROG,$2,$3);
        //$$ = root;
 
-      imprimirArbol(root,10); }{ printf("No hay errores \n");
+       imprimirArbol(root,10); }{ printf("No hay errores \n");
 
       }
     ;
 
-assignS: assign             {Data *data_ASIG = (Data*)malloc(sizeof(Data));
-                             data_ASIG->flag = TAG_ASIG;
+assignS: assign             { $$ = $1; }
 
-                             $$ = createTree(data_ASIG,NULL,NULL);
+       | assignS assign     {Data *data_ASIGS = (Data*)malloc(sizeof(Data));
+                             data_ASIGS->flag = TAG_ASSIGN;
 
-                             }
-
-       | assignS assign     {Data *data_ASIG = (Data*)malloc(sizeof(Data));
-                            data_ASIG->flag = TAG_ASIG;
-                            Data *data_ASIGS = (Data*)malloc(sizeof(Data));
-                            data_ASIGS->flag = TAG_ASIGS;
-                            nodeTree *node_ASIG = createTree(data_ASIG,NULL,NULL);
-                            nodeTree *node_ASIGS = createTree(data_ASIGS,NULL,NULL);
-
-                            $$ = createTree(node_ASIGS,node_ASIG,$1);
+                             $$ = createTree(data_ASIGS,$1,$2);
 
                             }
        ;
@@ -77,7 +68,7 @@ sentS: sent                 { $$ = $1; }
      | sentS sent           {Data *data_SENTS = (Data*)malloc(sizeof(Data));
                              data_SENTS->flag = TAG_SENT;
 
-                             $$ = createTree(node_SENTS,$1,$2);
+                             $$ = createTree(data_SENTS,$1,$2);
 
                              }
      ;
@@ -85,19 +76,19 @@ sentS: sent                 { $$ = $1; }
 
 sent: ID '=' expr ';'          {int n = existSymbol(aux,$1);
 
-                               if (n == 0) {
-                                printf("La variable no esta declarada");
-                               } else {
-                                Data data_symbol = searchSymbol(aux,$1);
+                                if (n == 0) {
+                                 printf("La variable no esta declarada");
+                                } else {
+                                Data *data_symbol = searchSymbol(aux,$1);
 
                                 Data *data_EQUAL = (Data*)malloc(sizeof(Data));
-                                data_EQUAL->flag = TAG_EQUAL;
+                                data_EQUAL->flag = TAG_ASSIGN;
 
                                 nodeTree *node_HI = createNode(data_symbol);
 
                                 $$ = createTree(data_EQUAL,node_HI,$3);
                                 printf("La variable esta declarada");
-                               }
+                                }
                                }
 
 
@@ -113,71 +104,71 @@ assign : type ID '=' VALOR ';' {Data *data_TID = (Data*)malloc(sizeof(Data));
                                 data_TID->type = $1;
                                 data_TID->name = $2;
                                 data_TID->flag = TAG_VARIABLE;
-                                insertSymbol(&aux,data_TID);
+                                insertSymbol(&aux,data_TID);        //controlar que no este ya en la tabla
+                                nodeTree *node_HI = createNode(data_TID);
 
-                                Data *data_AS = (Data*)malloc(sizeof(Data));
-                                data_AS->flag = TAG_ASSIGN;
+                                Data *data_EQUAL = (Data*)malloc(sizeof(Data));
+                                data_EQUAL->flag = TAG_ASSIGN;
 
-                                nodeTree *node_TID = createTree(data_TID,NULL,NULL);
+                                $$ = createTree(data_EQUAL,node_HI,$4);
 
-                                $$ = createTree(data_AS,node_TID,$4);}
-
+                                }
         ;
 
-expr: VALOR  {Data *data_EXP = (Data*)malloc(sizeof(Data));
-              data_EXP->flag = TAG_EXP;
+expr: VALOR  { $$ = $1; }
 
-              $$ = createTree(data_EXP,$1,NULL);
-              }
-
-    | expr '+' expr {Data *data_SUM = (Data*)malloc(sizeof(Data))
+    | expr '+' expr {Data *data_SUM = (Data*)malloc(sizeof(Data));
                      data_SUM->flag = TAG_SUM;
 
                      $$ = createTree(data_SUM,$1,$3);
+
                      }
-    
-    | expr '*' expr {Data *data_MULT = (Data*)malloc(sizeof(Data))
+
+    | expr '*' expr {Data *data_MULT = (Data*)malloc(sizeof(Data));
                      data_MULT->flag = TAG_MULT;
 
                      $$ = createTree(data_MULT,$1,$3);
+
                      }
 
     | expr TMENOS expr {Data *data_TMENOS = (Data*)malloc(sizeof(Data));
-                        data_TMENOS = TAG_RESTA;
+                        data_TMENOS->flag = TAG_RESTA;
 
                         $$ = createTree(data_TMENOS,$1,$3);
-                        }
-
-    | '(' expr ')'      {$$ = $2;
 
                         }
+
+    | '(' expr ')'      { $$ = $2; }
+
     ;
 
-type : TINT {$$ = 0;}
-     | TBOOL {$$ = 1;}
+type : TINT  { $$ = 0; }
+     | TBOOL { $$ = 1; }
      ;
 
-VALOR : INT {   Data *data_VALUE = (Data*)malloc(sizeof(Data));
+VALOR : INT    {Data *data_VALUE = (Data*)malloc(sizeof(Data));
                 data_VALUE->flag = TAG_VALUE;
                 data_VALUE->type = 0;
                 data_VALUE->value = $1;
 
-                $$ = createTree(data_VALUE,NULL,NULL);}
+                $$ = createTree(data_VALUE,NULL,NULL);
+               }
 
-      | BOOLT { Data *data_BOOLT = (Data*)malloc(sizeof(Data));
+      | BOOLT  {Data *data_BOOLT = (Data*)malloc(sizeof(Data));
                 data_BOOLT->flag = TAG_VALUE;
                 data_BOOLT->type = 1;
                 data_BOOLT->value = 1;
 
-                $$ = createTree(data_BOOLT,NULL,NULL); }
-      | BOOLF {Data *data_BOOLF = (Data*)malloc(sizeof(Data));
-               data_BOOLF->flag = TAG_VALUE;
-               data_BOOLF->type = 1;
-               data_BOOLF->value = 0;
+                $$ = createTree(data_BOOLT,NULL,NULL);
+               }
 
-               $$ = createTree(data_BOOLF,NULL,NULL); }
+      | BOOLF  {Data *data_BOOLF = (Data*)malloc(sizeof(Data));
+                data_BOOLF->flag = TAG_VALUE;
+                data_BOOLF->type = 1;
+                data_BOOLF->value = 0;
+
+                $$ = createTree(data_BOOLF,NULL,NULL);
+               }
       ;
  
 %%
-
-

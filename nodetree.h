@@ -3,14 +3,14 @@
 #include "auxiliary.h"
 
 typedef struct nodeTree{
-    struct Data info;
+    struct Data *info;
     struct nodeTree *hi;
     struct nodeTree *hd;
 } nodeTree;
 
-nodeTree* createNode(Data data);
+nodeTree* createNode(Data *data);
 
-nodeTree* createTree(Data data, nodeTree *hi, nodeTree *hd);
+nodeTree* createTree(Data *data, nodeTree *hi, nodeTree *hd);
 
 void imprimirArbol(nodeTree *root, int nivel);
 

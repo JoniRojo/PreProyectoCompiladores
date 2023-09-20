@@ -74,7 +74,7 @@ union YYSTYPE
 
 char* cadena;
 int numero;
-nodetree *tree;
+struct nodeTree *tree;
 
 #line 80 "calc-sintaxis.tab.h"
 

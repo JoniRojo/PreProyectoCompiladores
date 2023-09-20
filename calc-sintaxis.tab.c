@@ -521,9 +521,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    43,    43,    43,    43,    54,    59,    72,    77,    92,
-     110,   118,   133,   139,   145,   151,   157,   162,   163,   166,
-     173,   179
+       0,    43,    43,    43,    43,    56,    58,    66,    68,    77,
+      96,   104,   119,   121,   128,   135,   142,   146,   147,   150,
+     157,   163
 };
 #endif
 
@@ -1126,208 +1126,189 @@ yyreduce:
 
   case 4: /* prog: $@1 assignS sentS $@2  */
 #line 51 "calc-sintaxis.y"
-                               { printf("No hay errores \n"); }
-#line 1131 "calc-sintaxis.tab.c"
+                               { printf("No hay errores \n");
+
+      }
+#line 1133 "calc-sintaxis.tab.c"
     break;
 
   case 5: /* assignS: assign  */
-#line 54 "calc-sintaxis.y"
-                            {Data *data_ASIG = (Data*)malloc(sizeof(Data));
-                             data_ASIG->flag = TAG_ASIG;
-
-                             (yyval.tree) = createTree(data_ASIG,NULL,NULL);
-                             }
-#line 1141 "calc-sintaxis.tab.c"
+#line 56 "calc-sintaxis.y"
+                            { (yyval.tree) = (yyvsp[0].tree); }
+#line 1139 "calc-sintaxis.tab.c"
     break;
 
   case 6: /* assignS: assignS assign  */
-#line 59 "calc-sintaxis.y"
-                            {Data *data_ASIG = (Data*)malloc(sizeof(Data));
-                            data_ASIG->flag = TAG_ASIG;
-                            Data *data_ASIGS = (Data*)malloc(sizeof(Data));
-                            data_ASIGS->flag = TAG_ASIGS;
-                            nodeTree *node_ASIG = createTree(data_ASIG,NULL,NULL);
-                            nodeTree *node_ASIGS = createTree(data_ASIGS,NULL,NULL);
+#line 58 "calc-sintaxis.y"
+                            {Data *data_ASIGS = (Data*)malloc(sizeof(Data));
+                             data_ASIGS->flag = TAG_ASSIGN;
 
-                            (yyval.tree) = createTree(node_ASIGS,node_ASIG,(yyvsp[-1].tree));
-
+                             (yyval.tree) = createTree(data_ASIGS,(yyvsp[-1].tree),(yyvsp[0].tree));
 
                             }
-#line 1157 "calc-sintaxis.tab.c"
+#line 1150 "calc-sintaxis.tab.c"
     break;
 
   case 7: /* sentS: sent  */
-#line 72 "calc-sintaxis.y"
-                            {Data *data_SENT = (Data*)malloc(sizeof(Data));
-                             data_SENT->flag = TAG_SENT;
-
-                             (yyval.tree) = createTree(data_SENT,NULL,NULL);
-                            }
-#line 1167 "calc-sintaxis.tab.c"
+#line 66 "calc-sintaxis.y"
+                            { (yyval.tree) = (yyvsp[0].tree); }
+#line 1156 "calc-sintaxis.tab.c"
     break;
 
   case 8: /* sentS: sentS sent  */
-#line 77 "calc-sintaxis.y"
-                            {Data *data_SENT = (Data*)malloc(sizeof(Data));
-                             data_SENT->flag = TAG_SENT;
-
-                             Data *data_SENTS = (Data*)malloc(sizeof(Data));
+#line 68 "calc-sintaxis.y"
+                            {Data *data_SENTS = (Data*)malloc(sizeof(Data));
                              data_SENTS->flag = TAG_SENT;
 
-                             nodeTree *node_SENT = createTree(data_SENT,NULL,NULL);
-                             nodeTree *node_SENTS = createTree(data_SENTS,NULL,NULL);
-
-                             (yyval.tree) = createTree(node_SENTS,node_SENT,(yyvsp[-1].tree));
+                             (yyval.tree) = createTree(data_SENTS,(yyvsp[-1].tree),(yyvsp[0].tree));
 
                              }
-#line 1184 "calc-sintaxis.tab.c"
+#line 1167 "calc-sintaxis.tab.c"
     break;
 
   case 9: /* sent: ID '=' expr ';'  */
-#line 92 "calc-sintaxis.y"
+#line 77 "calc-sintaxis.y"
                                {int n = existSymbol(aux,(yyvsp[-3].cadena));
-                               if(n == 0){
+
+                               if (n == 0) {
                                 printf("La variable no esta declarada");
                                } else {
-                                nodoSymbol symbol;
-                                symbol.info = searchSymbol(aux,(yyvsp[-3].cadena));
+                                Data *data_symbol = searchSymbol(aux,(yyvsp[-3].cadena));
+
+                                Data *data_EQUAL = (Data*)malloc(sizeof(Data));
+                                data_EQUAL->flag = TAG_ASSIGN;
+
+                                nodeTree *node_HI = createNode(data_symbol);
+
+                                (yyval.tree) = createTree(data_EQUAL,node_HI,(yyvsp[-1].tree));
                                 printf("La variable esta declarada");
                                }
 
-                                Data *data_SENT = (Data*)malloc(sizeof(Data));
-                                data_SENT->flag = TAG_SENT;
-
-                                Data *data_TID = (Data*)malloc(sizeof(Data));
-                                data_TID->flag = TAG_VARIABLE;
-
-                                (yyval.tree) = createTree(data_SENT,data_TID,(yyvsp[-1].tree));
                                }
-#line 1206 "calc-sintaxis.tab.c"
+#line 1189 "calc-sintaxis.tab.c"
     break;
 
   case 10: /* sent: RETURN expr ';'  */
-#line 110 "calc-sintaxis.y"
+#line 96 "calc-sintaxis.y"
                                 {Data *data_RETURN = (Data*)malloc(sizeof(Data));
                                 data_RETURN->flag = TAG_RETURN;
 
                                 (yyval.tree) = createTree(data_RETURN,(yyvsp[-1].tree),NULL);
 
                                 }
-#line 1217 "calc-sintaxis.tab.c"
+#line 1200 "calc-sintaxis.tab.c"
     break;
 
   case 11: /* assign: type ID '=' VALOR ';'  */
-#line 118 "calc-sintaxis.y"
+#line 104 "calc-sintaxis.y"
                                {Data *data_TID = (Data*)malloc(sizeof(Data));
-                                data_TID->type = (yyvsp[-4].tree);
+                                data_TID->type = (yyvsp[-4].numero);
                                 data_TID->name = (yyvsp[-3].cadena);
                                 data_TID->flag = TAG_VARIABLE;
-                                insertSymbol(&aux,data_TID);
+                                insertSymbol(&aux,data_TID);        //controlar que no este ya en la tabla
+                                nodeTree *node_HI = createNode(data_TID);
 
-                                Data *data_AS = (Data*)malloc(sizeof(Data));
-                                data_AS->flag = TAG_ASSIGN;
+                                Data *data_EQUAL = (Data*)malloc(sizeof(Data));
+                                data_EQUAL->flag = TAG_ASSIGN;
 
-                                nodeTree *node_TID = createTree(data_TID,NULL,NULL);
+                                (yyval.tree) = createTree(data_EQUAL,node_HI,(yyvsp[-1].tree));
 
-                                (yyval.tree) = createTree(data_AS,node_TID,(yyvsp[-1].tree));}
-#line 1234 "calc-sintaxis.tab.c"
+                                }
+#line 1218 "calc-sintaxis.tab.c"
     break;
 
   case 12: /* expr: VALOR  */
-#line 133 "calc-sintaxis.y"
-             {Data *data_EXP = (Data*)malloc(sizeof(Data));
-              data_EXP->flag = TAG_EXP;
-
-              (yyval.tree) = createTree(data_EXP,(yyvsp[0].tree),NULL);
-              }
-#line 1244 "calc-sintaxis.tab.c"
+#line 119 "calc-sintaxis.y"
+             { (yyval.tree) = (yyvsp[0].tree); }
+#line 1224 "calc-sintaxis.tab.c"
     break;
 
   case 13: /* expr: expr '+' expr  */
-#line 139 "calc-sintaxis.y"
-                    {Data *data_SUM = (Data*)malloc(sizeof(Data))
+#line 121 "calc-sintaxis.y"
+                    {Data *data_SUM = (Data*)malloc(sizeof(Data));
                      data_SUM->flag = TAG_SUM;
 
                      (yyval.tree) = createTree(data_SUM,(yyvsp[-2].tree),(yyvsp[0].tree));
+
                      }
-#line 1254 "calc-sintaxis.tab.c"
+#line 1235 "calc-sintaxis.tab.c"
     break;
 
   case 14: /* expr: expr '*' expr  */
-#line 145 "calc-sintaxis.y"
-                    {Data *data_MULT = (Data*)malloc(sizeof(Data))
+#line 128 "calc-sintaxis.y"
+                    {Data *data_MULT = (Data*)malloc(sizeof(Data));
                      data_MULT->flag = TAG_MULT;
 
                      (yyval.tree) = createTree(data_MULT,(yyvsp[-2].tree),(yyvsp[0].tree));
+
                      }
-#line 1264 "calc-sintaxis.tab.c"
+#line 1246 "calc-sintaxis.tab.c"
     break;
 
   case 15: /* expr: expr TMENOS expr  */
-#line 151 "calc-sintaxis.y"
+#line 135 "calc-sintaxis.y"
                        {Data *data_TMENOS = (Data*)malloc(sizeof(Data));
-                        data_TMENOS = TAG_RESTA;
+                        data_TMENOS->flag = TAG_RESTA;
 
                         (yyval.tree) = createTree(data_TMENOS,(yyvsp[-2].tree),(yyvsp[0].tree));
+
                         }
-#line 1274 "calc-sintaxis.tab.c"
+#line 1257 "calc-sintaxis.tab.c"
     break;
 
   case 16: /* expr: '(' expr ')'  */
-#line 157 "calc-sintaxis.y"
-                        {(yyval.tree) = (yyvsp[-1].tree);
-
-                        }
-#line 1282 "calc-sintaxis.tab.c"
+#line 142 "calc-sintaxis.y"
+                        { (yyval.tree) = (yyvsp[-1].tree); }
+#line 1263 "calc-sintaxis.tab.c"
     break;
 
   case 17: /* type: TINT  */
-#line 162 "calc-sintaxis.y"
-            {(yyval.tree) = 0;}
-#line 1288 "calc-sintaxis.tab.c"
+#line 146 "calc-sintaxis.y"
+            {(yyval.numero) = 0;}
+#line 1269 "calc-sintaxis.tab.c"
     break;
 
   case 18: /* type: TBOOL  */
-#line 163 "calc-sintaxis.y"
-             {(yyval.tree) = 1;}
-#line 1294 "calc-sintaxis.tab.c"
+#line 147 "calc-sintaxis.y"
+             {(yyval.numero) = 1;}
+#line 1275 "calc-sintaxis.tab.c"
     break;
 
   case 19: /* VALOR: INT  */
-#line 166 "calc-sintaxis.y"
+#line 150 "calc-sintaxis.y"
             {   Data *data_VALUE = (Data*)malloc(sizeof(Data));
                 data_VALUE->flag = TAG_VALUE;
                 data_VALUE->type = 0;
                 data_VALUE->value = (yyvsp[0].numero);
 
                 (yyval.tree) = createTree(data_VALUE,NULL,NULL);}
-#line 1305 "calc-sintaxis.tab.c"
+#line 1286 "calc-sintaxis.tab.c"
     break;
 
   case 20: /* VALOR: BOOLT  */
-#line 173 "calc-sintaxis.y"
+#line 157 "calc-sintaxis.y"
               { Data *data_BOOLT = (Data*)malloc(sizeof(Data));
                 data_BOOLT->flag = TAG_VALUE;
                 data_BOOLT->type = 1;
                 data_BOOLT->value = 1;
 
                 (yyval.tree) = createTree(data_BOOLT,NULL,NULL); }
-#line 1316 "calc-sintaxis.tab.c"
+#line 1297 "calc-sintaxis.tab.c"
     break;
 
   case 21: /* VALOR: BOOLF  */
-#line 179 "calc-sintaxis.y"
+#line 163 "calc-sintaxis.y"
               {Data *data_BOOLF = (Data*)malloc(sizeof(Data));
                data_BOOLF->flag = TAG_VALUE;
                data_BOOLF->type = 1;
                data_BOOLF->value = 0;
 
                (yyval.tree) = createTree(data_BOOLF,NULL,NULL); }
-#line 1327 "calc-sintaxis.tab.c"
+#line 1308 "calc-sintaxis.tab.c"
     break;
 
 
-#line 1331 "calc-sintaxis.tab.c"
+#line 1312 "calc-sintaxis.tab.c"
 
       default: break;
     }
@@ -1520,7 +1501,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 187 "calc-sintaxis.y"
+#line 171 "calc-sintaxis.y"
 
 
 

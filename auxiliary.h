@@ -1,22 +1,17 @@
 #ifndef PRE_PROYECTO_AUXILIARY_H
 #define PRE_PROYECTO_AUXILIARY_H
 
-#define MAX 20
-
 enum Enum{
+    TAG_PROG,
+    TAG_ASSIGN,
+    TAG_VARIABLE,
+    TAG_SENT,
+    TAG_EXP,
+    TAG_VALUE,
+    TAG_RETURN,
     TAG_SUM,
     TAG_RESTA,
-    TAG_MULT,
-    TAG_EQUAL,
-    TAG_VARIABLE,
-    TAG_VALUE,
-    TAG_ASSIGN,
-    TAG_SENT,
-    TAG_RETURN,
-    TAG_EXP,
-    TAG_PROG,
-    TAG_ASIG,
-    TAG_ASIGS
+    TAG_MULT
 };
 
 typedef struct Data{
