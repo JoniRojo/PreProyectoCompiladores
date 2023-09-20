@@ -74,10 +74,12 @@
 #include <stdio.h>
 #include "symboltable.h"
 #include "symboltable.c"
+#include "nodetree.h"
+#include "nodetree.c"
 tableSymbol aux;
 
 
-#line 81 "calc-sintaxis.tab.c"
+#line 83 "calc-sintaxis.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -109,29 +111,30 @@ enum yysymbol_kind_t
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
   YYSYMBOL_INT = 3,                        /* INT  */
-  YYSYMBOL_BOOL = 4,                       /* BOOL  */
-  YYSYMBOL_TINT = 5,                       /* TINT  */
-  YYSYMBOL_TBOOL = 6,                      /* TBOOL  */
-  YYSYMBOL_ID = 7,                         /* ID  */
-  YYSYMBOL_TMENOS = 8,                     /* TMENOS  */
-  YYSYMBOL_RETURN = 9,                     /* RETURN  */
-  YYSYMBOL_10_ = 10,                       /* '+'  */
-  YYSYMBOL_11_ = 11,                       /* '*'  */
-  YYSYMBOL_12_ = 12,                       /* '='  */
-  YYSYMBOL_13_ = 13,                       /* ';'  */
-  YYSYMBOL_14_ = 14,                       /* '('  */
-  YYSYMBOL_15_ = 15,                       /* ')'  */
-  YYSYMBOL_YYACCEPT = 16,                  /* $accept  */
-  YYSYMBOL_prog = 17,                      /* prog  */
-  YYSYMBOL_18_1 = 18,                      /* $@1  */
-  YYSYMBOL_19_2 = 19,                      /* $@2  */
-  YYSYMBOL_assignS = 20,                   /* assignS  */
-  YYSYMBOL_sentS = 21,                     /* sentS  */
-  YYSYMBOL_sent = 22,                      /* sent  */
-  YYSYMBOL_assign = 23,                    /* assign  */
-  YYSYMBOL_expr = 24,                      /* expr  */
-  YYSYMBOL_type = 25,                      /* type  */
-  YYSYMBOL_VALOR = 26                      /* VALOR  */
+  YYSYMBOL_BOOLF = 4,                      /* BOOLF  */
+  YYSYMBOL_BOOLT = 5,                      /* BOOLT  */
+  YYSYMBOL_TINT = 6,                       /* TINT  */
+  YYSYMBOL_TBOOL = 7,                      /* TBOOL  */
+  YYSYMBOL_ID = 8,                         /* ID  */
+  YYSYMBOL_TMENOS = 9,                     /* TMENOS  */
+  YYSYMBOL_RETURN = 10,                    /* RETURN  */
+  YYSYMBOL_11_ = 11,                       /* '+'  */
+  YYSYMBOL_12_ = 12,                       /* '*'  */
+  YYSYMBOL_13_ = 13,                       /* '='  */
+  YYSYMBOL_14_ = 14,                       /* ';'  */
+  YYSYMBOL_15_ = 15,                       /* '('  */
+  YYSYMBOL_16_ = 16,                       /* ')'  */
+  YYSYMBOL_YYACCEPT = 17,                  /* $accept  */
+  YYSYMBOL_prog = 18,                      /* prog  */
+  YYSYMBOL_19_1 = 19,                      /* $@1  */
+  YYSYMBOL_20_2 = 20,                      /* $@2  */
+  YYSYMBOL_assignS = 21,                   /* assignS  */
+  YYSYMBOL_sentS = 22,                     /* sentS  */
+  YYSYMBOL_sent = 23,                      /* sent  */
+  YYSYMBOL_assign = 24,                    /* assign  */
+  YYSYMBOL_expr = 25,                      /* expr  */
+  YYSYMBOL_type = 26,                      /* type  */
+  YYSYMBOL_VALOR = 27                      /* VALOR  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -459,19 +462,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   38
+#define YYLAST   40
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  16
+#define YYNTOKENS  17
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  11
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  20
+#define YYNRULES  21
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  37
+#define YYNSTATES  38
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   264
+#define YYMAXUTOK   265
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -489,9 +492,9 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      14,    15,    11,    10,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    13,
-       2,    12,     2,     2,     2,     2,     2,     2,     2,     2,
+      15,    16,    12,    11,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    14,
+       2,    13,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -511,16 +514,16 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9
+       5,     6,     7,     8,     9,    10
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int8 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,    35,    35,    35,    35,    38,    39,    41,    42,    44,
-      55,    58,    67,    69,    71,    73,    75,    78,    79,    82,
-      83
+       0,    43,    43,    43,    43,    54,    59,    72,    77,    92,
+     110,   118,   133,   139,   145,   151,   157,   162,   163,   166,
+     173,   179
 };
 #endif
 
@@ -536,10 +539,10 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "INT", "BOOL", "TINT",
-  "TBOOL", "ID", "TMENOS", "RETURN", "'+'", "'*'", "'='", "';'", "'('",
-  "')'", "$accept", "prog", "$@1", "$@2", "assignS", "sentS", "sent",
-  "assign", "expr", "type", "VALOR", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "INT", "BOOLF",
+  "BOOLT", "TINT", "TBOOL", "ID", "TMENOS", "RETURN", "'+'", "'*'", "'='",
+  "';'", "'('", "')'", "$accept", "prog", "$@1", "$@2", "assignS", "sentS",
+  "sent", "assign", "expr", "type", "VALOR", YY_NULLPTR
 };
 
 static const char *
@@ -563,10 +566,10 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -16,     6,    -4,   -16,   -16,   -16,    21,   -16,    10,    23,
-       1,    22,   -16,   -16,    24,     1,   -16,   -16,     1,     8,
-     -16,   -16,   -16,    29,    12,    -1,     1,     1,     1,   -16,
-      -5,   -16,   -16,    13,    13,   -16,   -16
+     -16,     9,    26,   -16,   -16,   -16,    20,   -16,    16,    22,
+       2,    21,   -16,   -16,    23,     2,   -16,   -16,   -16,     2,
+       7,   -16,   -16,   -16,    -2,    11,    -1,     2,     2,     2,
+     -16,    24,   -16,   -16,    25,    25,   -16,   -16
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -575,23 +578,23 @@ static const yytype_int8 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        2,     0,     0,     1,    17,    18,     0,     5,     0,     0,
-       0,     3,     7,     6,     0,     0,    19,    20,     0,     0,
-      12,     4,     8,     0,     0,     0,     0,     0,     0,    10,
-       0,     9,    16,    15,    13,    14,    11
+       0,     3,     7,     6,     0,     0,    19,    21,    20,     0,
+       0,    12,     4,     8,     0,     0,     0,     0,     0,     0,
+      10,     0,     9,    16,    15,    13,    14,    11
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -16,   -16,   -16,   -16,   -16,   -16,    26,    28,   -15,   -16,
-      15
+     -16,   -16,   -16,   -16,   -16,   -16,    28,    34,   -15,   -16,
+      10
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     1,     2,    21,     6,    11,    12,     7,    19,     8,
-      20
+       0,     1,     2,    22,     6,    11,    12,     7,    20,     8,
+      21
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -599,36 +602,38 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      24,     4,     5,    25,    16,    17,     3,    26,    36,    27,
-      28,    33,    34,    35,    32,    18,    26,    14,    27,    28,
-      26,    29,    27,    28,    28,    31,     4,     5,     9,     9,
-      10,    10,    16,    17,    13,    15,    23,    22,    30
+      25,    16,    17,    18,    26,    16,    17,    18,    27,     3,
+      28,    29,    34,    35,    36,    33,    27,    19,    28,    29,
+      27,    30,    28,    29,    14,    32,     4,     5,     9,     9,
+      10,    10,     4,     5,    31,    15,    24,    29,    37,    23,
+      13
 };
 
 static const yytype_int8 yycheck[] =
 {
-      15,     5,     6,    18,     3,     4,     0,     8,    13,    10,
-      11,    26,    27,    28,    15,    14,     8,     7,    10,    11,
-       8,    13,    10,    11,    11,    13,     5,     6,     7,     7,
-       9,     9,     3,     4,     6,    12,    12,    11,    23
+      15,     3,     4,     5,    19,     3,     4,     5,     9,     0,
+      11,    12,    27,    28,    29,    16,     9,    15,    11,    12,
+       9,    14,    11,    12,     8,    14,     6,     7,     8,     8,
+      10,    10,     6,     7,    24,    13,    13,    12,    14,    11,
+       6
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    17,    18,     0,     5,     6,    20,    23,    25,     7,
-       9,    21,    22,    23,     7,    12,     3,     4,    14,    24,
-      26,    19,    22,    12,    24,    24,     8,    10,    11,    13,
-      26,    13,    15,    24,    24,    24,    13
+       0,    18,    19,     0,     6,     7,    21,    24,    26,     8,
+      10,    22,    23,    24,     8,    13,     3,     4,     5,    15,
+      25,    27,    20,    23,    13,    25,    25,     9,    11,    12,
+      14,    27,    14,    16,    25,    25,    25,    14
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    16,    18,    19,    17,    20,    20,    21,    21,    22,
-      22,    23,    24,    24,    24,    24,    24,    25,    25,    26,
-      26
+       0,    17,    19,    20,    18,    21,    21,    22,    22,    23,
+      23,    24,    25,    25,    25,    25,    25,    26,    26,    27,
+      27,    27
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -636,7 +641,7 @@ static const yytype_int8 yyr2[] =
 {
        0,     2,     0,     0,     4,     1,     2,     1,     2,     4,
        3,     5,     1,     3,     3,     3,     3,     1,     1,     1,
-       1
+       1,     1
 };
 
 
@@ -1100,25 +1105,86 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* $@1: %empty  */
-#line 35 "calc-sintaxis.y"
-      {aux.head = NULL; }
-#line 1106 "calc-sintaxis.tab.c"
+#line 43 "calc-sintaxis.y"
+      {aux.head = NULL;}
+#line 1111 "calc-sintaxis.tab.c"
     break;
 
   case 3: /* $@2: %empty  */
-#line 35 "calc-sintaxis.y"
-                                         {printTableSymbol(aux); }
-#line 1112 "calc-sintaxis.tab.c"
+#line 43 "calc-sintaxis.y"
+                                       {
+
+       Data *data_PROG = (Data*)malloc(sizeof(Data));
+       data_PROG->flag = TAG_PROG;
+
+       nodeTree *root = createTree(data_PROG,(yyvsp[-1].tree),(yyvsp[0].tree));
+       //$$ = root;
+
+      imprimirArbol(root,0); }
+#line 1125 "calc-sintaxis.tab.c"
     break;
 
   case 4: /* prog: $@1 assignS sentS $@2  */
-#line 35 "calc-sintaxis.y"
-                                                                  { printf("No hay errores \n"); }
-#line 1118 "calc-sintaxis.tab.c"
+#line 51 "calc-sintaxis.y"
+                              { printf("No hay errores \n"); }
+#line 1131 "calc-sintaxis.tab.c"
+    break;
+
+  case 5: /* assignS: assign  */
+#line 54 "calc-sintaxis.y"
+                            {Data *data_ASIG = (Data*)malloc(sizeof(Data));
+                             data_ASIG->flag = TAG_ASIG;
+
+                             (yyval.tree) = createTree(data_ASIG,NULL,NULL);
+                             }
+#line 1141 "calc-sintaxis.tab.c"
+    break;
+
+  case 6: /* assignS: assignS assign  */
+#line 59 "calc-sintaxis.y"
+                            {Data *data_ASIG = (Data*)malloc(sizeof(Data));
+                            data_ASIG->flag = TAG_ASIG;
+                            Data *data_ASIGS = (Data*)malloc(sizeof(Data));
+                            data_ASIGS->flag = TAG_ASIGS;
+                            nodeTree *node_ASIG = createTree(data_ASIG,NULL,NULL);
+                            nodeTree *node_ASIGS = createTree(data_ASIGS,NULL,NULL);
+
+                            (yyval.tree) = createTree(node_ASIGS,node_ASIG,(yyvsp[-1].tree));
+
+
+                            }
+#line 1157 "calc-sintaxis.tab.c"
+    break;
+
+  case 7: /* sentS: sent  */
+#line 72 "calc-sintaxis.y"
+                            {Data *data_SENT = (Data*)malloc(sizeof(Data));
+                             data_SENT->flag = TAG_SENT;
+
+                             (yyval.tree) = createTree(data_SENT,NULL,NULL);
+                            }
+#line 1167 "calc-sintaxis.tab.c"
+    break;
+
+  case 8: /* sentS: sentS sent  */
+#line 77 "calc-sintaxis.y"
+                            {Data *data_SENT = (Data*)malloc(sizeof(Data));
+                             data_SENT->flag = TAG_SENT;
+
+                             Data *data_SENTS = (Data*)malloc(sizeof(Data));
+                             data_SENTS->flag = TAG_SENT;
+
+                             nodeTree *node_SENT = createTree(data_SENT,NULL,NULL);
+                             nodeTree *node_SENTS = createTree(data_SENTS,NULL,NULL);
+
+                             (yyval.tree) = createTree(node_SENTS,node_SENT,(yyvsp[-1].tree));
+
+                             }
+#line 1184 "calc-sintaxis.tab.c"
     break;
 
   case 9: /* sent: ID '=' expr ';'  */
-#line 44 "calc-sintaxis.y"
+#line 92 "calc-sintaxis.y"
                                {int n = existSymbol(aux,(yyvsp[-3].cadena));
                                if(n == 0){
                                 printf("La variable no esta declarada");
@@ -1128,36 +1194,140 @@ yyreduce:
                                 printf("La variable esta declarada");
                                }
 
+                                Data *data_SENT = (Data*)malloc(sizeof(Data));
+                                data_SENT->flag = TAG_SENT;
+
+                                Data *data_TID = (Data*)malloc(sizeof(Data));
+                                data_TID->flag = TAG_VARIABLE;
+
+                                (yyval.tree) = createTree(data_SENT,data_TID,(yyvsp[-1].tree));
                                }
-#line 1133 "calc-sintaxis.tab.c"
+#line 1206 "calc-sintaxis.tab.c"
+    break;
+
+  case 10: /* sent: RETURN expr ';'  */
+#line 110 "calc-sintaxis.y"
+                                {Data *data_RETURN = (Data*)malloc(sizeof(Data));
+                                data_RETURN->flag = TAG_RETURN;
+
+                                (yyval.tree) = createTree(data_RETURN,(yyvsp[-1].tree),NULL);
+
+                                }
+#line 1217 "calc-sintaxis.tab.c"
     break;
 
   case 11: /* assign: type ID '=' VALOR ';'  */
-#line 58 "calc-sintaxis.y"
-                               {Data *new_node = (Data*)malloc(sizeof(Data));
-                                new_node->type = (yyvsp[-4].numero);
-                                new_node->name = (yyvsp[-3].cadena);
-                                new_node->flag = TAG_VARIABLE;
-                                insertSymbol(&aux,new_node);
-                                //ver que onda el arbol
+#line 118 "calc-sintaxis.y"
+                               {Data *data_TID = (Data*)malloc(sizeof(Data));
+                                data_TID->type = (yyvsp[-4].tree);
+                                data_TID->name = (yyvsp[-3].cadena);
+                                data_TID->flag = TAG_VARIABLE;
+                                insertSymbol(&aux,data_TID);
+
+                                Data *data_AS = (Data*)malloc(sizeof(Data));
+                                data_AS->flag = TAG_ASSIGN;
+
+                                nodeTree *node_TID = createTree(data_TID,NULL,NULL);
+
+                                (yyval.tree) = createTree(data_AS,node_TID,(yyvsp[-1].tree));}
+#line 1234 "calc-sintaxis.tab.c"
+    break;
+
+  case 12: /* expr: VALOR  */
+#line 133 "calc-sintaxis.y"
+             {Data *data_EXP = (Data*)malloc(sizeof(Data));
+              data_EXP->flag = TAG_EXP;
+
+              (yyval.tree) = createTree(data_EXP,(yyvsp[0].tree),NULL);
+              }
+#line 1244 "calc-sintaxis.tab.c"
+    break;
+
+  case 13: /* expr: expr '+' expr  */
+#line 139 "calc-sintaxis.y"
+                    {Data *data_SUM = (Data*)malloc(sizeof(Data))
+                     data_SUM->flag = TAG_SUM;
+
+                     (yyval.tree) = createTree(data_SUM,(yyvsp[-2].tree),(yyvsp[0].tree));
+                     }
+#line 1254 "calc-sintaxis.tab.c"
+    break;
+
+  case 14: /* expr: expr '*' expr  */
+#line 145 "calc-sintaxis.y"
+                    {Data *data_MULT = (Data*)malloc(sizeof(Data))
+                     data_MULT->flag = TAG_MULT;
+
+                     (yyval.tree) = createTree(data_MULT,(yyvsp[-2].tree),(yyvsp[0].tree));
+                     }
+#line 1264 "calc-sintaxis.tab.c"
+    break;
+
+  case 15: /* expr: expr TMENOS expr  */
+#line 151 "calc-sintaxis.y"
+                       {Data *data_TMENOS = (Data*)malloc(sizeof(Data));
+                        data_TMENOS = TAG_RESTA;
+
+                        (yyval.tree) = createTree(data_TMENOS,(yyvsp[-2].tree),(yyvsp[0].tree));
                         }
-#line 1145 "calc-sintaxis.tab.c"
+#line 1274 "calc-sintaxis.tab.c"
+    break;
+
+  case 16: /* expr: '(' expr ')'  */
+#line 157 "calc-sintaxis.y"
+                        {(yyval.tree) = (yyvsp[-1].tree);
+
+                        }
+#line 1282 "calc-sintaxis.tab.c"
     break;
 
   case 17: /* type: TINT  */
-#line 78 "calc-sintaxis.y"
-            {(yyval.numero) = 0;}
-#line 1151 "calc-sintaxis.tab.c"
+#line 162 "calc-sintaxis.y"
+            {(yyval.tree) = 0;}
+#line 1288 "calc-sintaxis.tab.c"
     break;
 
   case 18: /* type: TBOOL  */
-#line 79 "calc-sintaxis.y"
-             {(yyval.numero) = 1;}
-#line 1157 "calc-sintaxis.tab.c"
+#line 163 "calc-sintaxis.y"
+             {(yyval.tree) = 1;}
+#line 1294 "calc-sintaxis.tab.c"
+    break;
+
+  case 19: /* VALOR: INT  */
+#line 166 "calc-sintaxis.y"
+            {   Data *data_VALUE = (Data*)malloc(sizeof(Data));
+                data_VALUE->flag = TAG_VALUE;
+                data_VALUE->type = 0;
+                data_VALUE->value = (yyvsp[0].numero);
+
+                (yyval.tree) = createTree(data_VALUE,NULL,NULL);}
+#line 1305 "calc-sintaxis.tab.c"
+    break;
+
+  case 20: /* VALOR: BOOLT  */
+#line 173 "calc-sintaxis.y"
+              { Data *data_BOOLT = (Data*)malloc(sizeof(Data));
+                data_BOOLT->flag = TAG_VALUE;
+                data_BOOLT->type = 1;
+                data_BOOLT->value = 1;
+
+                (yyval.tree) = createTree(data_BOOLT,NULL,NULL); }
+#line 1316 "calc-sintaxis.tab.c"
+    break;
+
+  case 21: /* VALOR: BOOLF  */
+#line 179 "calc-sintaxis.y"
+              {Data *data_BOOLF = (Data*)malloc(sizeof(Data));
+               data_BOOLF->flag = TAG_VALUE;
+               data_BOOLF->type = 1;
+               data_BOOLF->value = 0;
+
+               (yyval.tree) = createTree(data_BOOLF,NULL,NULL); }
+#line 1327 "calc-sintaxis.tab.c"
     break;
 
 
-#line 1161 "calc-sintaxis.tab.c"
+#line 1331 "calc-sintaxis.tab.c"
 
       default: break;
     }
@@ -1350,7 +1520,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 86 "calc-sintaxis.y"
+#line 187 "calc-sintaxis.y"
 
 
 

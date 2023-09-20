@@ -1,12 +1,17 @@
-
 #ifndef PRE_PROYECTO_NODETREE_H
 #define PRE_PROYECTO_NODETREE_H
 #include "auxiliary.h"
 
-typedef struct NodeTree{
+typedef struct nodeTree{
     struct Data info;
-    struct NodeTree *hi;
-    struct NodeTree *hd;
-}NodoTree;
+    struct nodeTree *hi;
+    struct nodeTree *hd;
+} nodeTree;
+
+
+
+nodeTree* createTree(Data data, nodeTree *hi, nodeTree *hd);
+
+void imprimirArbol(nodeTree *root, int nivel);
 
 #endif //PRE_PROYECTO_NODETREE_H

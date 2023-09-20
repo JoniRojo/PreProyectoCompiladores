@@ -55,12 +55,13 @@ extern int yydebug;
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
     INT = 258,                     /* INT  */
-    BOOL = 259,                    /* BOOL  */
-    TINT = 260,                    /* TINT  */
-    TBOOL = 261,                   /* TBOOL  */
-    ID = 262,                      /* ID  */
-    TMENOS = 263,                  /* TMENOS  */
-    RETURN = 264                   /* RETURN  */
+    BOOLF = 259,                   /* BOOLF  */
+    BOOLT = 260,                   /* BOOLT  */
+    TINT = 261,                    /* TINT  */
+    TBOOL = 262,                   /* TBOOL  */
+    ID = 263,                      /* ID  */
+    TMENOS = 264,                  /* TMENOS  */
+    RETURN = 265                   /* RETURN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -69,12 +70,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 12 "calc-sintaxis.y"
+#line 14 "calc-sintaxis.y"
 
 char* cadena;
 int numero;
+nodeTree *tree;
 
-#line 78 "calc-sintaxis.tab.h"
+#line 80 "calc-sintaxis.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

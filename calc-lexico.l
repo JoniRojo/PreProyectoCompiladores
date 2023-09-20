@@ -21,9 +21,14 @@ digito [0-9]
 															printf("RETURN: %s\n",yytext);
 															return RETURN;}
 
-"true"|"false"							{ 
+"true"							{
 															printf("BOOL: %s\n",yytext);
-															return BOOL;}
+															return BOOLT;}
+
+
+"false"							{
+															printf("BOOL: %s\n",yytext);
+															return BOOLF;}
 
 "int"												{ 
 															printf("TINT: %s\n",yytext);
