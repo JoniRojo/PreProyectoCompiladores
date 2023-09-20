@@ -1120,13 +1120,13 @@ yyreduce:
        nodeTree *root = createTree(data_PROG,(yyvsp[-1].tree),(yyvsp[0].tree));
        //$$ = root;
 
-      imprimirArbol(root,0); }
+      imprimirArbol(root,10); }
 #line 1125 "calc-sintaxis.tab.c"
     break;
 
   case 4: /* prog: $@1 assignS sentS $@2  */
 #line 51 "calc-sintaxis.y"
-                              { printf("No hay errores \n"); }
+                               { printf("No hay errores \n"); }
 #line 1131 "calc-sintaxis.tab.c"
     break;
 

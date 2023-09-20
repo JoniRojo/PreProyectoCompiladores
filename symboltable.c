@@ -51,6 +51,18 @@ Data searchSymbol(tableSymbol table,char name[]){
     }
 }
 
+/*
+nodoSymbol* searchSymbol(tableSymbol table, char name[]){
+    nodoSymbol *aux = table.head;
+    while(aux != NULL){
+        if(aux->info.name == name){
+            return aux;
+        }
+        aux = aux->next;
+    }
+}
+*/
+
 void printTableSymbol(tableSymbol table) {
     nodoSymbol *entry = table.head;
     while (entry != NULL) {

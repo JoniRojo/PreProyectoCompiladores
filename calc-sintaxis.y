@@ -48,14 +48,18 @@ prog: {aux.head = NULL;} assignS sentS {
        nodeTree *root = createTree(data_PROG,$2,$3);
        //$$ = root;
 
-      imprimirArbol(root,0); }{ printf("No hay errores \n"); }
+      imprimirArbol(root,10); }{ printf("No hay errores \n");
+
+      }
     ;
 
 assignS: assign             {Data *data_ASIG = (Data*)malloc(sizeof(Data));
                              data_ASIG->flag = TAG_ASIG;
 
                              $$ = createTree(data_ASIG,NULL,NULL);
+
                              }
+
        | assignS assign     {Data *data_ASIG = (Data*)malloc(sizeof(Data));
                             data_ASIG->flag = TAG_ASIG;
                             Data *data_ASIGS = (Data*)malloc(sizeof(Data));
@@ -65,47 +69,37 @@ assignS: assign             {Data *data_ASIG = (Data*)malloc(sizeof(Data));
 
                             $$ = createTree(node_ASIGS,node_ASIG,$1);
 
-
                             }
        ;
 
-sentS: sent                 {Data *data_SENT = (Data*)malloc(sizeof(Data));
-                             data_SENT->flag = TAG_SENT;
+sentS: sent                 { $$ = $1; }
 
-                             $$ = createTree(data_SENT,NULL,NULL);
-                            }
-     | sentS sent           {Data *data_SENT = (Data*)malloc(sizeof(Data));
-                             data_SENT->flag = TAG_SENT;
-
-                             Data *data_SENTS = (Data*)malloc(sizeof(Data));
+     | sentS sent           {Data *data_SENTS = (Data*)malloc(sizeof(Data));
                              data_SENTS->flag = TAG_SENT;
 
-                             nodeTree *node_SENT = createTree(data_SENT,NULL,NULL);
-                             nodeTree *node_SENTS = createTree(data_SENTS,NULL,NULL);
-
-                             $$ = createTree(node_SENTS,node_SENT,$1);
+                             $$ = createTree(node_SENTS,$1,$2);
 
                              }
      ;
 
 
 sent: ID '=' expr ';'          {int n = existSymbol(aux,$1);
-                               if(n == 0){
+
+                               if (n == 0) {
                                 printf("La variable no esta declarada");
                                } else {
-                                nodoSymbol symbol;
-                                symbol.info = searchSymbol(aux,$1);
+                                Data data_symbol = searchSymbol(aux,$1);
+
+                                Data *data_EQUAL = (Data*)malloc(sizeof(Data));
+                                data_EQUAL->flag = TAG_EQUAL;
+
+                                nodeTree *node_HI = createNode(data_symbol);
+
+                                $$ = createTree(data_EQUAL,node_HI,$3);
                                 printf("La variable esta declarada");
                                }
-
-                                Data *data_SENT = (Data*)malloc(sizeof(Data));
-                                data_SENT->flag = TAG_SENT;
-
-                                Data *data_TID = (Data*)malloc(sizeof(Data));
-                                data_TID->flag = TAG_VARIABLE;
-
-                                $$ = createTree(data_SENT,data_TID,$3);
                                }
+
 
     | RETURN expr ';'           {Data *data_RETURN = (Data*)malloc(sizeof(Data));
                                 data_RETURN->flag = TAG_RETURN;

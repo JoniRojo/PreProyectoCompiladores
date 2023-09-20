@@ -3,6 +3,17 @@
 #include <stdlib.h>
 #include "nodetree.h"
 
+
+nodeTree* createNode(Data data){
+    nodeTree *newNode = (nodeTree *)malloc(sizeof (nodeTree));
+    newNode->info = data;
+    newNode->hi = NULL;
+    newNode->hd = NULL;
+
+
+    return newNode;
+}
+
 nodeTree* createTree(Data data, nodeTree *hi, nodeTree *hd){
     nodeTree *newTree = (nodeTree *)malloc(sizeof (nodeTree));
     newTree->info = data;

@@ -8,7 +8,7 @@ typedef struct nodeTree{
     struct nodeTree *hd;
 } nodeTree;
 
-
+nodeTree* createNode(Data data);
 
 nodeTree* createTree(Data data, nodeTree *hi, nodeTree *hd);
 
