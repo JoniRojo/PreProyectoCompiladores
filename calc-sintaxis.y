@@ -7,6 +7,8 @@
 #include "nodetree.h"
 #include "nodetree.c"
 tableSymbol aux;
+//FILE *name;
+
 
 %}
 
@@ -48,7 +50,8 @@ prog: {aux.head = NULL;} assignS sentS {
        nodeTree *root = createTree(data_PROG,$2,$3);
        //$$ = root;
 
-       imprimirArbol(root,10); }{ printf("No hay errores \n");
+       //printTree(root,name);
+       }{ printf("No hay errores \n");
 
       }
     ;
@@ -76,7 +79,7 @@ sentS: sent                 { $$ = $1; }
 
 sent: ID '=' expr ';'          {int n = existSymbol(aux,$1);
 
-                                if (n == 0) {
+                                if ( n == 0) {
                                  printf("La variable no esta declarada");
                                 } else {
                                 Data *data_symbol = searchSymbol(aux,$1);
@@ -100,18 +103,23 @@ sent: ID '=' expr ';'          {int n = existSymbol(aux,$1);
                                 }
     ; 
 
-assign : type ID '=' VALOR ';' {Data *data_TID = (Data*)malloc(sizeof(Data));
-                                data_TID->type = $1;
-                                data_TID->name = $2;
-                                data_TID->flag = TAG_VARIABLE;
-                                insertSymbol(&aux,data_TID);        //controlar que no este ya en la tabla
-                                nodeTree *node_HI = createNode(data_TID);
+assign : type ID '=' VALOR ';' {int n = existSymbol(aux,$2);
 
-                                Data *data_EQUAL = (Data*)malloc(sizeof(Data));
-                                data_EQUAL->flag = TAG_ASSIGN;
+                                 if( n == 0 ) {
+                                     print("La variable ya esta declarada");
+                                 } else {
+                                     Data *data_TID = (Data*)malloc(sizeof(Data));
+                                     data_TID->type = $1;
+                                     data_TID->name = $2;
+                                     data_TID->flag = TAG_VARIABLE;
+                                     insertSymbol(&aux,data_TID);
+                                     nodeTree *node_HI = createNode(data_TID);
 
-                                $$ = createTree(data_EQUAL,node_HI,$4);
+                                     Data *data_EQUAL = (Data*)malloc(sizeof(Data));
+                                     data_EQUAL->flag = TAG_ASSIGN;
 
+                                     $$ = createTree(data_EQUAL,node_HI,$4);
+                                 }
                                 }
         ;
 

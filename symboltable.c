@@ -17,6 +17,7 @@ void insertSymbol(tableSymbol *table,Data *symbol){
     if(table->head == NULL){
         table->head = new_node;
     } else {
+
         nodoSymbol *aux = table->head;
         table->head = new_node;
         table->head->next = aux;

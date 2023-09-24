@@ -1,4 +1,1 @@
 int x = 10;
-bool y = true;
-int z = 5;
-x = 9;

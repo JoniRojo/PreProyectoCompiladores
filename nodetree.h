@@ -12,6 +12,8 @@ nodeTree* createNode(Data *data);
 
 nodeTree* createTree(Data *data, nodeTree *hi, nodeTree *hd);
 
-void imprimirArbol(nodeTree *root, int nivel);
+void printAux(nodeTree *root,int count,FILE *name);
+
+void printTree(nodeTree *root, FILE *name);
 
 #endif //PRE_PROYECTO_NODETREE_H
