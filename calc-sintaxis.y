@@ -105,8 +105,8 @@ sent: ID '=' expr ';'          {int n = existSymbol(aux,$1);
 
 assign : type ID '=' VALOR ';' {int n = existSymbol(aux,$2);
 
-                                 if( n == 0 ) {
-                                     print("La variable ya esta declarada");
+                                 if( n == 1 ) {
+                                     printf("La variable ya esta declarada");
                                  } else {
                                      Data *data_TID = (Data*)malloc(sizeof(Data));
                                      data_TID->type = $1;
@@ -128,22 +128,61 @@ expr: VALOR  { $$ = $1; }
     | expr '+' expr {Data *data_SUM = (Data*)malloc(sizeof(Data));
                      data_SUM->flag = TAG_SUM;
 
-                     $$ = createTree(data_SUM,$1,$3);
+                        if($1->info->type == 0 && $3->info->type == 0){
 
-                     }
+                            $$->info->value = $1->info->value + $3->info->value;
+                            data_SUM->type = 0;
+                            $$ = createTree(data_SUM,$1,$3);
+
+                        } else if($1->info->type == 1 && $3->info->type == 1){
+
+                            if($1->info->value == 1 || $3->info->value == 1){
+                                $$->info->value = 1;
+                            } else {
+                                $$->info->value = 0;
+                            }
+                            data_SUM->type = 0;
+                            $$ = createTree(data_SUM,$1,$3);
+                        } else {
+                            printf("Los tipos de los datos no concuerdan");
+                        }
+
+                    }
 
     | expr '*' expr {Data *data_MULT = (Data*)malloc(sizeof(Data));
                      data_MULT->flag = TAG_MULT;
 
-                     $$ = createTree(data_MULT,$1,$3);
+                        if($1->info->type == 0 && $3->info->type == 0){
 
+                            $$->info->value = $1->info->value * $3->info->value;
+                            data_MULT->type = 0;
+                            $$ = createTree(data_MULT,$1,$3);
+
+                        }else if($1->info->type == 1 && $3->info->type == 1){
+
+                            if($1->info->value == 0 || $3->info->value == 0){
+                                $$->info->value = 0;
+                            } else {
+                                $$->info->value = 1;
+                            }
+
+                            data_MULT->type = 0;
+                            $$ = createTree(data_MULT,$1,$3);
+                        } else {
+                        printf("Los tipos de los datos no concuerdan");
+                        }
                      }
 
     | expr TMENOS expr {Data *data_TMENOS = (Data*)malloc(sizeof(Data));
                         data_TMENOS->flag = TAG_RESTA;
 
-                        $$ = createTree(data_TMENOS,$1,$3);
-
+                            if($1->info->type == 0 && $3->info->type == 0){
+                                $$->info->value = $1->info->value - $3->info->value;
+                                data_TMENOS->type = 0;
+                                $$ = createTree(data_TMENOS,$1,$3);
+                            } else {
+                               printf("Los tipos de los datos no concuerdan");
+                            }
                         }
 
     | '(' expr ')'      { $$ = $2; }
@@ -159,7 +198,7 @@ VALOR : INT    {Data *data_VALUE = (Data*)malloc(sizeof(Data));
                 data_VALUE->type = 0;
                 data_VALUE->value = $1;
 
-                $$ = createTree(data_VALUE,NULL,NULL);
+                $$ = createNode(data_VALUE);
                }
 
       | BOOLT  {Data *data_BOOLT = (Data*)malloc(sizeof(Data));
@@ -167,7 +206,7 @@ VALOR : INT    {Data *data_VALUE = (Data*)malloc(sizeof(Data));
                 data_BOOLT->type = 1;
                 data_BOOLT->value = 1;
 
-                $$ = createTree(data_BOOLT,NULL,NULL);
+                $$ = createNode(data_BOOLT);
                }
 
       | BOOLF  {Data *data_BOOLF = (Data*)malloc(sizeof(Data));
@@ -175,7 +214,7 @@ VALOR : INT    {Data *data_VALUE = (Data*)malloc(sizeof(Data));
                 data_BOOLF->type = 1;
                 data_BOOLF->value = 0;
 
-                $$ = createTree(data_BOOLF,NULL,NULL);
+                $$ = createNode(data_BOOLF);
                }
       ;
  
