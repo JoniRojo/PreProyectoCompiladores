@@ -7,7 +7,7 @@
 #include "nodetree.h"
 #include "nodetree.c"
 tableSymbol aux;
-//FILE *name;
+FILE *name;
 
 
 %}
@@ -50,7 +50,7 @@ prog: {aux.head = NULL;} assignS sentS {
        nodeTree *root = createTree(data_PROG,$2,$3);
        //$$ = root;
 
-       //printTree(root,name);
+       printTree(root,name);
        }{ printf("No hay errores \n");
 
       }
@@ -107,6 +107,7 @@ assign : type ID '=' VALOR ';' {int n = existSymbol(aux,$2);
 
                                  if( n == 1 ) {
                                      printf("La variable ya esta declarada");
+                                     exit(1);
                                  } else {
                                      Data *data_TID = (Data*)malloc(sizeof(Data));
                                      data_TID->type = $1;
