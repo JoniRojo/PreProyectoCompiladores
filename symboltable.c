@@ -9,9 +9,7 @@
 void insertSymbol(tableSymbol *table,Data *symbol){
 
     nodoSymbol *new_node = (nodoSymbol *)malloc(sizeof(nodoSymbol));
-    new_node->info->flag = symbol->flag;
-    new_node->info->name = symbol->name;
-    new_node->info->type = symbol->type;
+    new_node->info = symbol;
     new_node->next = NULL;
 
     if(table->head == NULL){
