@@ -14,11 +14,11 @@ enum Enum{
     TAG_MULT
 };
 
-typedef struct Data{
+typedef struct Data {
     enum Enum flag;
     char* name;
     int type;
     int value;
-}Data;
+} Data;
 
 #endif //PRE_PROYECTO_AUXILIARY_H

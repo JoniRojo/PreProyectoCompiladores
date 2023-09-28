@@ -50,7 +50,7 @@ prog: {aux.head = NULL;} assignS sentS {
        nodeTree *root = createTree(data_PROG,$2,$3);
        //$$ = root;
 
-       printTree(root,name);
+       dotTree(root,"name.dot");
        }{ printf("No hay errores \n");
 
       }
@@ -81,6 +81,7 @@ sent: ID '=' expr ';'          {int n = existSymbol(aux,$1);
 
                                 if ( n == 0) {
                                  printf("La variable no esta declarada");
+
                                 } else {
                                 Data *data_symbol = searchSymbol(aux,$1);
 
@@ -90,7 +91,7 @@ sent: ID '=' expr ';'          {int n = existSymbol(aux,$1);
                                 nodeTree *node_HI = createNode(data_symbol);
 
                                 $$ = createTree(data_EQUAL,node_HI,$3);
-                                printf("La variable esta declarada");
+                                printf("La variable esta declarada\n");
                                 }
                                }
 
@@ -125,6 +126,8 @@ assign : type ID '=' VALOR ';' {int n = existSymbol(aux,$2);
         ;
 
 expr: VALOR  { $$ = $1; }
+
+    //| ID {Data *data_TID = searchSymbol($1);}
 
     | expr '+' expr {Data *data_SUM = (Data*)malloc(sizeof(Data));
                      data_SUM->flag = TAG_SUM;
@@ -170,7 +173,7 @@ expr: VALOR  { $$ = $1; }
                             data_MULT->type = 0;
                             $$ = createTree(data_MULT,$1,$3);
                         } else {
-                        printf("Los tipos de los datos no concuerdan");
+                            printf("Los tipos de los datos no concuerdan");
                         }
                      }
 

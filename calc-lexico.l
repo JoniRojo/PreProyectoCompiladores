@@ -6,6 +6,7 @@
 
 #include "calc-sintaxis.tab.h"
 
+
 %}
 
 %option noyywrap
@@ -67,13 +68,4 @@ digito [0-9]
 
 void yyerror(){
 	printf("%s %d\n","-> ERROR Sintactico en la linea: ",yylineno);
-}
-
-int main(int argc,char *argv[]){
-	++argv,--argc;
-	if (argc > 0)
-		yyin = fopen(argv[0],"r");
-	else
-		yyin = stdin;
-	yyparse();
 }

@@ -8,12 +8,12 @@ typedef struct nodeTree{
     struct nodeTree *hd;
 } nodeTree;
 
-nodeTree* createNode(Data *data);
+nodeTree* createNode( Data *data );
 
-nodeTree* createTree(Data *data, nodeTree *hi, nodeTree *hd);
+nodeTree* createTree( Data *data, nodeTree *hi, nodeTree *hd );
 
-void printAux(nodeTree *root,int n_root, int *count,FILE *name);
+void dotAux( nodeTree *root, int padre, int *count, FILE *name );
 
-void printTree(nodeTree *root,FILE *name);
+void dotTree( nodeTree *root, char name[]);
 
 #endif //PRE_PROYECTO_NODETREE_H
