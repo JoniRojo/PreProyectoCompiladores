@@ -12,11 +12,11 @@ typedef struct tableSymbol {
 } tableSymbol;
 
 /*
-typedef struct stackLevel{
+typedef struct stackLevel {
   int level;
   tablaSimbolos *head;
   struct stackLevel *next;
-}stackLevel;
+} stackLevel ;
 */
 
 #endif //PRE_PROYECTO_SYMBOLTABLE_H
