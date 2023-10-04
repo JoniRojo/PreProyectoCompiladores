@@ -4,7 +4,7 @@
 #include "treeadresscode.h"
 
 typedef struct Node3DirCode{
-    threeDirectionCode info;
+    threeAdressCode info;
     struct Node3DirCode *next;
 } Node3DirCode;
 
@@ -12,5 +12,5 @@ typedef struct List3DirCode{
     Node3DirCode *head;
 } List3DirCode;
 
-void insert3DirCode(List3DirCode *list, threeDirectionCode info);
+void insert3DirCode(List3DirCode *list, threeAdressCode info);
 #endif //PRE_PROYECTO_LINKEDLIST_H

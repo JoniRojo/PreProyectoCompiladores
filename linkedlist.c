@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include "linkedlist.h"
 
-void insert3DirCode(List3DirCode *list, threeDirectionCode info){
+void insert3DirCode(List3DirCode *list, threeAdressCode info){
     Node3DirCode *new_node = (Node3DirCode *)malloc(sizeof(Node3DirCode));
     new_node->info = info;
     new_node->next = NULL;

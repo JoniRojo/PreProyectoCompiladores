@@ -12,12 +12,12 @@ enum Code{
     MULT
 };
 
-typedef struct threeDirectionCode {
+typedef struct threeAdressCode {
     enum Code code;
     struct Data* op1;
     struct Data* op2;
     struct Data* result;
-} threeDirectionCode;
+} threeAdressCode;
 
 
 #endif //PRE_PROYECTO_GENASEMMBLY_H
