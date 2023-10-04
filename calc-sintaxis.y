@@ -86,7 +86,7 @@ sent: ID '=' expr ';'          { int n = existSymbol( aux, $1 );
 
                                 if ( n == 0 ) {
                                  printf( "La variable no esta declarada" );
-
+                                 exit(1);
                                 } else {
                                 Data *data_symbol = searchSymbol( aux, $1 );
 
@@ -94,9 +94,17 @@ sent: ID '=' expr ';'          { int n = existSymbol( aux, $1 );
                                 data_EQUAL->flag = TAG_ASSIGN;
 
                                 nodeTree *node_HI = createNode( data_symbol );
+                                printf("%d",node_HI->info->type);
+                                printf("%d",$3->info->type);
+                                if(node_HI->info->type == $3->info->type){
 
-                                $$ = createTree( data_EQUAL, node_HI, $3);
-                                printf( "La variable esta declarada\n" );
+                                       printf( "La variable esta declarada\n" );
+                                       $$ = createTree( data_EQUAL, node_HI, $3);
+                                } else {
+                                    printf("Los types de la sentencia son diferentes");
+                                    exit(1);
+                                }
+
                                 }
                                }
 
@@ -124,7 +132,16 @@ assign : type ID '=' VALOR ';' { int n = existSymbol( aux, $2 );
                                      Data *data_EQUAL = ( Data* ) malloc ( sizeof ( Data ) );
                                      data_EQUAL->flag = TAG_ASSIGN;
 
-                                     $$ = createTree( data_EQUAL, node_HI, $4 );
+
+                                        //printf("%d",node_HI->info->type);
+                                        //printf("%d",$4->info->type);
+                                     if(node_HI->info->type == $4->info->type){
+                                        $$ = createTree( data_EQUAL, node_HI, $4 );
+                                     } else {
+                                        printf("Los types de la asignacion son diferentes");
+                                        exit(1);
+                                     }
+
                                  }
                                 }
         ;
@@ -140,21 +157,23 @@ expr: VALOR  { $$ = $1; }
 
                      if ($1->info->type == 0 && $3->info->type == 0){
 
-                        $$->info->value = $1->info->value + $3->info->value;
+                        data_SUM->value = $1->info->value + $3->info->value;
                         data_SUM->type = 0;
                         $$ = createTree( data_SUM, $1, $3 );
 
                      } else if ( $1->info->type == 1 && $3->info->type == 1 ) {
 
                         if ( $1->info->value == 1 || $3->info->value == 1 ) {
-                            $$->info->value = 1;
+                            data_SUM->value = 1;
                         } else {
-                            $$->info->value = 0;
+                            data_SUM->value = 0;
                         }
-                        data_SUM->type = 0;
+                        data_SUM->type = 1;
                         $$ = createTree( data_SUM, $1, $3 );
+
                      } else {
                         printf( "Los tipos de los datos no concuerdan" );
+                        exit(1);
                      }
                     }
 
@@ -163,21 +182,22 @@ expr: VALOR  { $$ = $1; }
 
                      if( $1->info->type == 0 && $3->info->type == 0 ) {
 
-                        $$->info->value = $1->info->value * $3->info->value;
+                        data_MULT->value = $1->info->value * $3->info->value;
                         data_MULT->type = 0;
                         $$ = createTree(data_MULT,$1,$3);
 
                      } else if ( $1->info->type == 1 && $3->info->type == 1 ) {
 
                         if ( $1->info->value == 0 || $3->info->value == 0 ) {
-                            $$->info->value = 0;
+                            data_MULT->value = 0;
                         } else {
-                                $$->info->value = 1;
+                            data_MULT->value = 1;
                         }
                         data_MULT->type = 0;
                         $$ = createTree( data_MULT, $1, $3 );
                      } else {
                         printf( "Los tipos de los datos no concuerdan" );
+                        exit(1);
                      }
                     }
 
@@ -185,11 +205,12 @@ expr: VALOR  { $$ = $1; }
                         data_TMENOS->flag = TAG_RESTA;
 
                         if ( $1->info->type == 0 && $3->info->type == 0 ) {
-                            $$->info->value = $1->info->value - $3->info->value;
+                            data_TMENOS->value = $1->info->value - $3->info->value;
                             data_TMENOS->type = 0;
                             $$ = createTree( data_TMENOS, $1, $3);
                         } else {
                             printf( "Los tipos de los datos no concuerdan" );
+                            exit(1);
                         }
                        }
 
