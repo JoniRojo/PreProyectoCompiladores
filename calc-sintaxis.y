@@ -113,6 +113,16 @@ sent: ID '=' expr ';'          { int n = existSymbol( aux, $1 );
                                  data_RETURN->flag = TAG_RETURN;
 
                                  $$ = createTree(data_RETURN,$2,NULL);
+
+                                 if( $2->info->type == 0 ) {
+                                    printf("El valor de %s es %d\n",$2->info->name,$2->info->value);
+                                 } else {
+                                    if ( $2->info->value == 1 ) {
+                                        printf("El valor de %s es true\n",$2->info->name);
+                                    } else {
+                                        printf("El valor de %s es false\n",$2->info->name);
+                                    }
+                                  }
                                 }
     ;
 
@@ -132,10 +142,8 @@ assign : type ID '=' VALOR ';' { int n = existSymbol( aux, $2 );
                                      Data *data_EQUAL = ( Data* ) malloc ( sizeof ( Data ) );
                                      data_EQUAL->flag = TAG_ASSIGN;
 
-
-                                        //printf("%d",node_HI->info->type);
-                                        //printf("%d",$4->info->type);
                                      if(node_HI->info->type == $4->info->type){
+                                        data_TID->value = $4->info->value;
                                         $$ = createTree( data_EQUAL, node_HI, $4 );
                                      } else {
                                         printf("Los types de la asignacion son diferentes");

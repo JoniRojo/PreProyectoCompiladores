@@ -45,6 +45,7 @@ digito [0-9]
                        
 {digito}+                       {
                                  printf("INT : %d\n",atoi(yytext));
+                                 yylval.numero = atoi(yytext);
                                  return INT;
                                 }
 
