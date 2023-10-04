@@ -130,7 +130,7 @@ assign : type ID '=' VALOR ';' { int n = existSymbol( aux, $2 );
 
                                  if ( n == 1 ) {
                                      printf( "La variable ya esta declarada" );
-                                     exit( 1 );
+                                     exit(1);
                                  } else {
                                      Data *data_TID = ( Data* ) malloc ( sizeof( Data ) );
                                      data_TID->type = $1;
