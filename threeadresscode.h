@@ -4,12 +4,12 @@
 #include "auxiliary.h"
 
 enum Code{
-    ASSIGN,
-    SENT,
-    RETURN,
-    SUM,
-    RESTA,
-    MULT
+    CODE_ASSIGN,
+    CODE_SENT,
+    CODE_RETURN,
+    CODE_SUM,
+    CODE_RESTA,
+    CODE_MULT
 };
 
 typedef struct threeAdressCode {

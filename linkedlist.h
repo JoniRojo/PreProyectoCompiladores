@@ -1,16 +1,16 @@
 #ifndef PRE_PROYECTO_LINKEDLIST_H
 #define PRE_PROYECTO_LINKEDLIST_H
 
-#include "treeadresscode.h"
+#include "threeadresscode.h"
 
-typedef struct Node3DirCode{
+typedef struct Node3AdrCode{
     threeAdressCode info;
-    struct Node3DirCode *next;
-} Node3DirCode;
+    struct Node3AdrCode *next;
+} Node3AdrCode;
 
-typedef struct List3DirCode{
-    Node3DirCode *head;
-} List3DirCode;
+typedef struct List3AdrCode{
+    Node3AdrCode *head;
+} List3AdrCode;
 
-void insert3DirCode(List3DirCode *list, threeAdressCode info);
+void insert3AdrCode(List3AdrCode *list, threeAdressCode info);
 #endif //PRE_PROYECTO_LINKEDLIST_H

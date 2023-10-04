@@ -6,7 +6,12 @@
 #include "symboltable.c"
 #include "nodetree.h"
 #include "nodetree.c"
-tableSymbol aux;
+#include "threeadresscode.h"
+#include "threeadresscode.h"
+#include "linkedlist.h"
+#include "linkedlist.c"
+tableSymbol tableSym;
+List3AdrCode list3AdrCode;
 FILE *name;
 
 
@@ -41,7 +46,9 @@ struct nodeTree *tree;
 %left '*'
 
 %%
-prog1: { aux.head = NULL; } prog
+prog1: { tableSym.head = NULL;
+         list3AdrCode.head = NULL;
+       } prog
 
 prog:  assignS sentS { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
                        data_PROG->flag = TAG_PROG;
@@ -82,13 +89,13 @@ sentS: sent                 { $$ = $1; }
      ;
 
 
-sent: ID '=' expr ';'          { int n = existSymbol( aux, $1 );
+sent: ID '=' expr ';'          { int n = existSymbol( tableSym, $1 );
 
                                 if ( n == 0 ) {
                                  printf( "La variable no esta declarada" );
                                  exit(1);
                                 } else {
-                                Data *data_symbol = searchSymbol( aux, $1 );
+                                Data *data_symbol = searchSymbol( tableSym, $1 );
 
                                 Data *data_EQUAL = ( Data* ) malloc ( sizeof( Data ) );
                                 data_EQUAL->flag = TAG_ASSIGN;
@@ -126,7 +133,7 @@ sent: ID '=' expr ';'          { int n = existSymbol( aux, $1 );
                                 }
     ;
 
-assign : type ID '=' VALOR ';' { int n = existSymbol( aux, $2 );
+assign : type ID '=' VALOR ';' { int n = existSymbol(tableSym, $2 );
 
                                  if ( n == 1 ) {
                                      printf( "La variable ya esta declarada" );
@@ -136,7 +143,7 @@ assign : type ID '=' VALOR ';' { int n = existSymbol( aux, $2 );
                                      data_TID->type = $1;
                                      data_TID->name = $2;
                                      data_TID->flag = TAG_VARIABLE;
-                                     insertSymbol( &aux, data_TID );
+                                     insertSymbol( &tableSym, data_TID );
                                      nodeTree *node_HI = createNode( data_TID );
 
                                      Data *data_EQUAL = ( Data* ) malloc ( sizeof ( Data ) );
@@ -145,6 +152,13 @@ assign : type ID '=' VALOR ';' { int n = existSymbol( aux, $2 );
                                      if(node_HI->info->type == $4->info->type){
                                         data_TID->value = $4->info->value;
                                         $$ = createTree( data_EQUAL, node_HI, $4 );
+
+                                        threeAdressCode  *new_tac = (threeAdressCode *)malloc(sizeof(threeAdressCode));
+                                        new_tac->code = CODE_ASSIGN;
+                                        new_tac->op1 = $4->info;
+                                        new_tac->result = data_TID;
+                                        insert3AdrCode(&list3AdrCode, new_tac);
+
                                      } else {
                                         printf("Los types de la asignacion son diferentes");
                                         exit(1);
@@ -156,7 +170,7 @@ assign : type ID '=' VALOR ';' { int n = existSymbol( aux, $2 );
 
 expr: VALOR  { $$ = $1; }
 
-    | ID   { Data *data_TID = searchSymbol( aux, $1 );
+    | ID   { Data *data_TID = searchSymbol( tableSym, $1 );
              $$ = createNode( data_TID );
            }
 
