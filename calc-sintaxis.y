@@ -57,6 +57,7 @@ prog:  assignS sentS { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
                        //$$ = root;
 
                        dotTree( root, "name.dot" );
+                       print3AdrCode(list3AdrCode);
                        { printf( "No hay errores \n" ); }
                       }
        | assignS { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
@@ -66,6 +67,7 @@ prog:  assignS sentS { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
                    //$$ = root;
 
                    dotTree( root, "name.dot" );
+                   print3AdrCode(list3AdrCode);
                    { printf( "No hay errores \n" ); }
        }
     ;
@@ -92,7 +94,7 @@ sentS: sent                 { $$ = $1; }
 sent: ID '=' expr ';'          { int n = existSymbol( tableSym, $1 );
 
                                 if ( n == 0 ) {
-                                 printf( "La variable no esta declarada" );
+                                 printf( "La variable no esta declarada\n" );
                                  exit(1);
                                 } else {
                                 Data *data_symbol = searchSymbol( tableSym, $1 );
@@ -101,14 +103,19 @@ sent: ID '=' expr ';'          { int n = existSymbol( tableSym, $1 );
                                 data_EQUAL->flag = TAG_ASSIGN;
 
                                 nodeTree *node_HI = createNode( data_symbol );
-                                printf("%d",node_HI->info->type);
-                                printf("%d",$3->info->type);
-                                if(node_HI->info->type == $3->info->type){
 
+                                if(node_HI->info->type == $3->info->type){
                                        printf( "La variable esta declarada\n" );
                                        $$ = createTree( data_EQUAL, node_HI, $3);
+
+                                       threeAdressCode  *new_tac_sent = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                                       new_tac_sent->code = CODE_SENT;
+                                       new_tac_sent->op1 = $3->info;
+                                       new_tac_sent->result = node_HI->info;
+                                       insert3AdrCode( &list3AdrCode, new_tac_sent );
+
                                 } else {
-                                    printf("Los types de la sentencia son diferentes");
+                                    printf("Los types de la sentencia son diferentes\n");
                                     exit(1);
                                 }
 
@@ -118,8 +125,14 @@ sent: ID '=' expr ';'          { int n = existSymbol( tableSym, $1 );
 
     | RETURN expr ';'           { Data *data_RETURN = ( Data* ) malloc ( sizeof( Data ) );
                                  data_RETURN->flag = TAG_RETURN;
+                                 data_RETURN->value = $2->info->value;
 
                                  $$ = createTree(data_RETURN,$2,NULL);
+
+                                 threeAdressCode  *new_tac_ret = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                                 new_tac_ret->code = CODE_RETURN;
+                                 new_tac_ret->result = data_RETURN;
+                                 insert3AdrCode( &list3AdrCode, new_tac_ret );
 
                                  if( $2->info->type == 0 ) {
                                     printf("El valor de %s es %d\n",$2->info->name,$2->info->value);
@@ -136,7 +149,7 @@ sent: ID '=' expr ';'          { int n = existSymbol( tableSym, $1 );
 assign : type ID '=' VALOR ';' { int n = existSymbol(tableSym, $2 );
 
                                  if ( n == 1 ) {
-                                     printf( "La variable ya esta declarada" );
+                                     printf( "La variable ya esta declarada\n" );
                                      exit(1);
                                  } else {
                                      Data *data_TID = ( Data* ) malloc ( sizeof( Data ) );
@@ -149,18 +162,18 @@ assign : type ID '=' VALOR ';' { int n = existSymbol(tableSym, $2 );
                                      Data *data_EQUAL = ( Data* ) malloc ( sizeof ( Data ) );
                                      data_EQUAL->flag = TAG_ASSIGN;
 
-                                     if(node_HI->info->type == $4->info->type){
+                                     if ( node_HI->info->type == $4->info->type ) {
                                         data_TID->value = $4->info->value;
                                         $$ = createTree( data_EQUAL, node_HI, $4 );
 
-                                        threeAdressCode  *new_tac = (threeAdressCode *)malloc(sizeof(threeAdressCode));
-                                        new_tac->code = CODE_ASSIGN;
-                                        new_tac->op1 = $4->info;
-                                        new_tac->result = data_TID;
-                                        insert3AdrCode(&list3AdrCode, new_tac);
+                                        threeAdressCode  *new_tac_assign = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                                        new_tac_assign->code = CODE_ASSIGN;
+                                        new_tac_assign->op1 = $4->info;
+                                        new_tac_assign->result = data_TID;
+                                        insert3AdrCode( &list3AdrCode, new_tac_assign );
 
                                      } else {
-                                        printf("Los types de la asignacion son diferentes");
+                                        printf("Los types de la asignacion son diferentes\n");
                                         exit(1);
                                      }
 
@@ -183,6 +196,13 @@ expr: VALOR  { $$ = $1; }
                         data_SUM->type = 0;
                         $$ = createTree( data_SUM, $1, $3 );
 
+                        threeAdressCode  *new_tac_sum = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                        new_tac_sum->code = CODE_SUM;
+                        new_tac_sum->op1 = $1->info;
+                        new_tac_sum->op2 = $3->info;
+                        new_tac_sum->result = data_SUM;
+                        insert3AdrCode( &list3AdrCode, new_tac_sum );
+
                      } else if ( $1->info->type == 1 && $3->info->type == 1 ) {
 
                         if ( $1->info->value == 1 || $3->info->value == 1 ) {
@@ -193,8 +213,15 @@ expr: VALOR  { $$ = $1; }
                         data_SUM->type = 1;
                         $$ = createTree( data_SUM, $1, $3 );
 
+                        threeAdressCode  *new_tac_sum = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                        new_tac_sum->code = CODE_SUM;
+                        new_tac_sum->op1 = $1->info;
+                        new_tac_sum->op2 = $3->info;
+                        new_tac_sum->result = data_SUM;
+                        insert3AdrCode( &list3AdrCode, new_tac_sum );
+
                      } else {
-                        printf( "Los tipos de los datos no concuerdan" );
+                        printf( "Los tipos de los datos no concuerdan\n" );
                         exit(1);
                      }
                     }
@@ -208,6 +235,13 @@ expr: VALOR  { $$ = $1; }
                         data_MULT->type = 0;
                         $$ = createTree(data_MULT,$1,$3);
 
+                        threeAdressCode  *new_tac_mult = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                        new_tac_mult->code = CODE_MULT;
+                        new_tac_mult->op1 = $1->info;
+                        new_tac_mult->op2 = $3->info;
+                        new_tac_mult->result = data_MULT;
+                        insert3AdrCode( &list3AdrCode, new_tac_mult );
+
                      } else if ( $1->info->type == 1 && $3->info->type == 1 ) {
 
                         if ( $1->info->value == 0 || $3->info->value == 0 ) {
@@ -217,8 +251,16 @@ expr: VALOR  { $$ = $1; }
                         }
                         data_MULT->type = 0;
                         $$ = createTree( data_MULT, $1, $3 );
+
+                        threeAdressCode  *new_tac_mult = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                        new_tac_mult->code = CODE_MULT;
+                        new_tac_mult->op1 = $1->info;
+                        new_tac_mult->op2 = $3->info;
+                        new_tac_mult->result = data_MULT;
+                        insert3AdrCode( &list3AdrCode, new_tac_mult );
+
                      } else {
-                        printf( "Los tipos de los datos no concuerdan" );
+                        printf( "Los tipos de los datos no concuerdan\n" );
                         exit(1);
                      }
                     }
@@ -230,8 +272,16 @@ expr: VALOR  { $$ = $1; }
                             data_TMENOS->value = $1->info->value - $3->info->value;
                             data_TMENOS->type = 0;
                             $$ = createTree( data_TMENOS, $1, $3);
+
+                            threeAdressCode  *new_tac_resta = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                            new_tac_resta->code = CODE_RESTA;
+                            new_tac_resta->op1 = $1->info;
+                            new_tac_resta->op2 = $3->info;
+                            new_tac_resta->result = data_TMENOS;
+                            insert3AdrCode( &list3AdrCode, new_tac_resta );
+
                         } else {
-                            printf( "Los tipos de los datos no concuerdan" );
+                            printf( "Los tipos de los datos no concuerdan\n" );
                             exit(1);
                         }
                        }

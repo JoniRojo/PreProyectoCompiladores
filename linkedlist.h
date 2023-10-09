@@ -12,5 +12,5 @@ typedef struct List3AdrCode{
     Node3AdrCode *head;
 } List3AdrCode;
 
-void insert3AdrCode(List3AdrCode *list, threeAdressCode info);
+void insert3AdrCode(List3AdrCode *list, threeAdressCode *info);
 #endif //PRE_PROYECTO_LINKEDLIST_H
