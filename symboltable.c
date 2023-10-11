@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+int off = 0;
+
 void insertSymbol( tableSymbol *table, Data *symbol ) {
     nodoSymbol *new_node = ( nodoSymbol * ) malloc ( sizeof( nodoSymbol ) );
     new_node->info = symbol;
@@ -45,10 +47,16 @@ Data* searchSymbol( tableSymbol table, char name[] ) {
     }
 }
 
+int InsertOffsed(){
+
+    off = off - 8;
+    return off;
+}
+
 void printTableSymbol( tableSymbol table ) {
     nodoSymbol *entry = table.head;
     while ( entry != NULL ) {
-        printf( "Nombre: %s, Tipo: %d\n", entry->info->name, entry->info->type );
+        printf( "Nombre: %s, Tipo: %d\n", entry->info->name, entry->info->offsed );
         entry = entry->next;
     }
 }

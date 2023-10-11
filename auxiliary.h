@@ -19,6 +19,7 @@ typedef struct Data {
     char* name;
     int type;
     int value;
+    int offsed;
 } Data;
 
 #endif //PRE_PROYECTO_AUXILIARY_H
