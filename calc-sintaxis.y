@@ -13,6 +13,7 @@
 tableSymbol tableSym;
 List3AdrCode list3AdrCode;
 FILE *name;
+FILE *assembler;
 
 
 %}
@@ -59,6 +60,7 @@ prog:  assignS sentS { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
                        //printTableSymbol(tableSym);
                        dotTree( root, "name.dot" );
                        print3AdrCode(list3AdrCode);
+                       writeAssembler(list3AdrCode,assembler);
                        { printf( "No hay errores \n" ); }
                       }
        | assignS { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
@@ -71,6 +73,7 @@ prog:  assignS sentS { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
                    //printTableSymbol(tableSym);
                    dotTree( root, "name.dot" );
                    print3AdrCode(list3AdrCode);
+                   writeAssembler(list3AdrCode,assembler);
                    { printf( "No hay errores \n" ); }
        }
     ;

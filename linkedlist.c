@@ -44,21 +44,38 @@ void print3AdrCode(List3AdrCode list) {
 
             printf( " {Code: %s,", array_code[entry->info.code]);
             if(entry->info.op1 != NULL ){
-                printf(" op1: %s %s %d, ", array_flag[entry->info.op1->flag], entry->info.op1->name, entry->info.op1->value);
+                printf(" op1: %s %s %d %d, ", array_flag[entry->info.op1->flag], entry->info.op1->name, entry->info.op1->value,entry->info.op1->offsed);
             }else{
                 printf(" op1: (null), ");
             }
             if (entry->info.op2 != NULL) {
-                printf(" op2: %s %s %d, ",array_flag[entry->info.op2->flag], entry->info.op2->name, entry->info.op2->value);
+                printf(" op2: %s %s %d %d, ",array_flag[entry->info.op2->flag], entry->info.op2->name, entry->info.op2->value,entry->info.op2->offsed);
             }else{
                 printf(" op2: (null), ");
             }
             if(entry->info.result != NULL){
-                printf(" result: %s %s %d" , array_flag[entry->info.result->flag], entry->info.result->name, entry->info.result->value);
+                printf(" result: %s %s %d %d" , array_flag[entry->info.result->flag], entry->info.result->name, entry->info.result->value,entry->info.result->offsed);
             }else{
                 printf(" result: (null) ");
             }
             printf("}\n\n");
+            entry = entry->next;
+        }
+    }
+}
+
+void writeAssembler(List3AdrCode list, char name[]){
+    Node3AdrCode *entry = list.head;
+    if( entry == NULL){
+        printf("Error: No hay decleraciones ni sentencias");
+    } else {
+        FILE *file = fopen(name,"a+");
+        if( file == NULL) {
+            exit(EXIT_FAILURE);
+        }
+
+        while(entry != NULL){
+            //GENERAR LAS INSTRUCCIONES DEL ASSEMBLER PARA CADA OPERACION USANDO EL OFFSED
             entry = entry->next;
         }
     }
