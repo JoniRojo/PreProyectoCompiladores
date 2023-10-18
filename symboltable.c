@@ -47,8 +47,7 @@ Data* searchSymbol( tableSymbol table, char name[] ) {
     }
 }
 
-int InsertOffsed(){
-
+int InsertOffset(){
     off = off - 8;
     return off;
 }
@@ -56,7 +55,7 @@ int InsertOffsed(){
 void printTableSymbol( tableSymbol table ) {
     nodoSymbol *entry = table.head;
     while ( entry != NULL ) {
-        printf( "Nombre: %s, Tipo: %d\n", entry->info->name, entry->info->offsed );
+        printf( "Nombre: %s, Tipo: %d\n", entry->info->name, entry->info->offset );
         entry = entry->next;
     }
 }

@@ -162,7 +162,7 @@ assign : type ID '=' VALOR ';' { int n = existSymbol(tableSym, $2 );
                                      data_TID->type = $1;
                                      data_TID->name = $2;
                                      data_TID->flag = TAG_VARIABLE;
-                                     data_TID->offsed = InsertOffsed();
+                                     data_TID->offset = InsertOffset();
                                      insertSymbol( &tableSym, data_TID );
                                      nodeTree *node_HI = createNode( data_TID );
 
@@ -196,7 +196,7 @@ expr: VALOR  { $$ = $1; }
 
     | expr '+' expr { Data *data_SUM = ( Data* ) malloc ( sizeof( Data ) );
                      data_SUM->flag = TAG_SUM;
-                     data_SUM->offsed = InsertOffsed();
+                     data_SUM->offset = InsertOffset();
 
                      if ($1->info->type == 0 && $3->info->type == 0){
 
@@ -236,7 +236,7 @@ expr: VALOR  { $$ = $1; }
 
     | expr '*' expr { Data *data_MULT = ( Data* ) malloc ( sizeof( Data ) );
                      data_MULT->flag = TAG_MULT;
-                     data_MULT->offsed = InsertOffsed();
+                     data_MULT->offset = InsertOffset();
 
                      if( $1->info->type == 0 && $3->info->type == 0 ) {
 
@@ -276,7 +276,7 @@ expr: VALOR  { $$ = $1; }
 
     | expr TMENOS expr { Data *data_TMENOS = ( Data* ) malloc ( sizeof( Data ) );
                         data_TMENOS->flag = TAG_RESTA;
-                        data_TMENOS->offsed = InsertOffsed();
+                        data_TMENOS->offset = InsertOffset();
 
                         if ( $1->info->type == 0 && $3->info->type == 0 ) {
                             data_TMENOS->value = $1->info->value - $3->info->value;
