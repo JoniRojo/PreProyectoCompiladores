@@ -11,6 +11,8 @@ typedef struct tableSymbol {
     nodoSymbol *head;
 } tableSymbol;
 
+int updateOffset();
+
 /*
 typedef struct stackLevel {
   int level;

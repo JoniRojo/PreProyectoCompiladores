@@ -69,7 +69,6 @@ prog:  assignS sentS { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
                    nodeTree *root = createTree( data_PROG, $1, NULL );
                    //$$ = root;
 
-
                    //printTableSymbol(tableSym);
                    dotTree( root, "name.dot" );
                    print3AdrCode(list3AdrCode);
@@ -162,7 +161,7 @@ assign : type ID '=' VALOR ';' { int n = existSymbol(tableSym, $2 );
                                      data_TID->type = $1;
                                      data_TID->name = $2;
                                      data_TID->flag = TAG_VARIABLE;
-                                     data_TID->offset = InsertOffset();
+                                     data_TID->offset = updateOffset();
                                      insertSymbol( &tableSym, data_TID );
                                      nodeTree *node_HI = createNode( data_TID );
 
@@ -196,7 +195,7 @@ expr: VALOR  { $$ = $1; }
 
     | expr '+' expr { Data *data_SUM = ( Data* ) malloc ( sizeof( Data ) );
                      data_SUM->flag = TAG_SUM;
-                     data_SUM->offset = InsertOffset();
+                     data_SUM->offset = updateOffset();
 
                      if ($1->info->type == 0 && $3->info->type == 0){
 
@@ -236,7 +235,7 @@ expr: VALOR  { $$ = $1; }
 
     | expr '*' expr { Data *data_MULT = ( Data* ) malloc ( sizeof( Data ) );
                      data_MULT->flag = TAG_MULT;
-                     data_MULT->offset = InsertOffset();
+                     data_MULT->offset = updateOffset();
 
                      if( $1->info->type == 0 && $3->info->type == 0 ) {
 
@@ -276,7 +275,7 @@ expr: VALOR  { $$ = $1; }
 
     | expr TMENOS expr { Data *data_TMENOS = ( Data* ) malloc ( sizeof( Data ) );
                         data_TMENOS->flag = TAG_RESTA;
-                        data_TMENOS->offset = InsertOffset();
+                        data_TMENOS->offset = updateOffset();
 
                         if ( $1->info->type == 0 && $3->info->type == 0 ) {
                             data_TMENOS->value = $1->info->value - $3->info->value;

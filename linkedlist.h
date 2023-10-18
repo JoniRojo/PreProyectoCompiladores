@@ -13,4 +13,7 @@ typedef struct List3AdrCode{
 } List3AdrCode;
 
 void insert3AdrCode(List3AdrCode *list, threeAdressCode *info);
+
+void writeAssembler(List3AdrCode list, char name[]);
+
 #endif //PRE_PROYECTO_LINKEDLIST_H

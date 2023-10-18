@@ -66,15 +66,15 @@ void print3AdrCode(List3AdrCode list) {
 
 void writeAssembler(List3AdrCode list, char name[]){
     Node3AdrCode *entry = list.head;
-    if( entry == NULL){
+    if( entry == NULL ) {
         printf("Error: No hay decleraciones ni sentencias");
     } else {
         FILE *file = fopen(name,"a+");
-        if( file == NULL) {
+        if( file == NULL ) {
             exit(EXIT_FAILURE);
         }
 
-        while(entry != NULL){
+        while ( entry != NULL ) {
             //GENERAR LAS INSTRUCCIONES DEL ASSEMBLER PARA CADA OPERACION USANDO EL OFFSET
             entry = entry->next;
         }

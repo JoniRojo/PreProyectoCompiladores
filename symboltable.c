@@ -47,7 +47,7 @@ Data* searchSymbol( tableSymbol table, char name[] ) {
     }
 }
 
-int InsertOffset(){
+int updateOffset(){
     off = off - 8;
     return off;
 }
