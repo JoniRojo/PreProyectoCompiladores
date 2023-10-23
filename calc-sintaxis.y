@@ -60,7 +60,7 @@ prog:  assignS sentS { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
                        //printTableSymbol(tableSym);
                        dotTree( root, "name.dot" );
                        print3AdrCode(list3AdrCode);
-                       writeAssembler(list3AdrCode,assembler);
+                       writeAssembler(list3AdrCode,"assembler.s");
                        { printf( "No hay errores \n" ); }
                       }
        | assignS { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
@@ -72,7 +72,7 @@ prog:  assignS sentS { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
                    //printTableSymbol(tableSym);
                    dotTree( root, "name.dot" );
                    print3AdrCode(list3AdrCode);
-                   writeAssembler(list3AdrCode,assembler);
+                   writeAssembler(list3AdrCode,"assembler.s");
                    { printf( "No hay errores \n" ); }
        }
     ;

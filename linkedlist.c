@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include "linkedlist.h"
+#include "symboltable.h"
 #define MAX 20
 
 char array_flag[][MAX] = {"TAG_PROG",
@@ -30,8 +31,10 @@ void insert3AdrCode(List3AdrCode *list, threeAdressCode *info){
         list->head = new_node;
     } else {
         Node3AdrCode *aux = list->head;
-        list->head  = new_node;
-        list->head->next = aux;
+        while ( aux->next != NULL ) {
+            aux = aux->next;
+        }
+        aux->next = new_node;
     }
 }
 
@@ -64,57 +67,79 @@ void print3AdrCode(List3AdrCode list) {
     }
 }
 
-//gcc -s veo lo que genera
+//gcc -S veo lo que genera
 void writeAssembler(List3AdrCode list, char name[]){
     Node3AdrCode *entry = list.head;
     if( entry == NULL ) {
-        printf("Error: No hay decleraciones ni sentencias");
+        printf("Error: No hay decleraciones ni sentencias\n");
     } else {
         FILE *file = fopen(name,"a+");
         if( file == NULL ) {
             exit(EXIT_FAILURE);
         }
+
+        int lastOffset = updateOffset() + 8;
+        fprintf( file, ".text\n.globl main\n.type main, @function\n");
+        fprintf(file,"main:\n\tpushq %%rbp\n\tmovq %%rsp, %%rbp\n\tsubq $%d, %%rsp\n\n",lastOffset);
+
         while ( entry != NULL ) {
-            if ( entry->info.code == 0 ) { //CODE_ASSIGN
-                if ( entry->info.op1->flag == 5) { //TAG_VALUE
-                    fprintf( file, "movq %d , %d(%%rbp)", entry->info.op1->value, entry->info.result->offset );
+            if ( entry->info.code == 0 || entry->info.code == 1 ) { //CODE_ASSIGN || CODE_SENT
+                if ( entry->info.op1->flag == 5 ) { //TAG_VALUE
+                    fprintf( file, "movq $%d , %d(%%rbp)\n", entry->info.op1->value, entry->info.result->offset );
                 } else { //TAG_VARIABLE
-                    fprintf( file, "movq %d(%%rbp) ,  %%rax", entry->info.op1->offset );
-                    fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
+                    fprintf( file, "movq %d(%%rbp) ,  %%rax\n", entry->info.op1->offset );
+                    fprintf( file, "movq %%rax , %d(%%rbp)\n", entry->info.result->offset );
                 }
             }
-            // CON ENTEROS, PENSAR CON BOOL
+            if( entry->info.code == 2 ) { //CODE_RETURN
+                if ( entry->info.op1->flag == 5 ) { //TAG_VALUE
+                    fprintf( file, "movq $%d , %%edi\n", entry->info.result->value );
+                    if ( entry->info.result->type == 0 ) { //INT
+                        fprintf( file, "call print_int\n");
+                    } else { //BOOL
+                        fprintf( file, "call print_bool\n");
+                    }
+                } else { //TAG_VARIABLE
+                    fprintf( file, "movq %d(%%rbp) , %%edi\n", entry->info.result->offset );
+                    if ( entry->info.result->type == 0 ) { //INT
+                        fprintf( file, "call print_int\n");
+                    } else { //BOOL
+                        fprintf( file, "call print_bool\n");
+                    }
+                }
+            }
             if ( entry->info.code == 3 ) { //CODE_SUM
                 if ( entry->info.op1->flag == 5 && entry->info.op2->flag == 5 ) { //TAG_VALUE & TAG_VALUE
-                    fprintf( file, "movq %d , %%rax", entry->info.op1->value );
-                    fprintf( file, "addq %d , %%rax ", entry->info.op2->value );
-                    fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
+                    fprintf( file, "movq $%d , %%rax\n", entry->info.op1->value );
+                    fprintf( file, "addq $%d , %%rax \n", entry->info.op2->value );
+                    fprintf( file, "movq %%rax , %d(%%rbp)\n", entry->info.result->offset );
                 } else if ( entry->info.op1->flag == 5 && entry->info.op2->flag == 2 ) { //TAG_VALUE & TAG_VARIABLE
-                    fprintf( file, "movq %d ,  %%rax", entry->info.op1->value );
-                    fprintf( file, "addq %d(%%rbp) , %%rax ", entry->info.op2->offset );
-                    fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
+                    fprintf( file, "movq $%d ,  %%rax\n", entry->info.op1->value );
+                    fprintf( file, "addq %d(%%rbp) , %%rax\n", entry->info.op2->offset );
+                    fprintf( file, "movq %%rax , %d(%%rbp)\n", entry->info.result->offset );
                 } else if ( entry->info.op1->flag == 2 && entry->info.op2->flag == 5 ) { //TAG_VARIABLE & TAG_VALUE
-                    fprintf( file, "movq %d(%%rbp) ,  %%rax", entry->info.op1->offset );
-                    fprintf( file, "addq %d , %%rax ", entry->info.op2->value );
-                    fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
+                    fprintf( file, "movq %d(%%rbp) ,  %%rax\n", entry->info.op1->offset );
+                    fprintf( file, "addq $%d , %%rax\n ", entry->info.op2->value );
+                    fprintf( file, "movq %%rax , %d(%%rbp)\n", entry->info.result->offset );
                 } else { //TAG_VARIABLE & TAG_VARIABLE
-                    fprintf( file, "movq %d(%%rbp) ,  %%rax", entry->info.op1->offset );
-                    fprintf( file, "addq %d(%%rbp) , %%rax ", entry->info.op2->offset );
-                    fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
+                    fprintf( file, "movq %d(%%rbp) ,  %%rax\n", entry->info.op1->offset );
+                    fprintf( file, "addq %d(%%rbp) , %%rax\n", entry->info.op2->offset );
+                    fprintf( file, "movq %%rax , %d(%%rbp)\n", entry->info.result->offset );
                 }
             }
+            /*
             if ( entry->info.code == 4) { //CODE_RESTA
                 if ( entry->info.op1->flag == 5 && entry->info.op2->flag == 5 ) { //TAG_VALUE & TAG_VALUE
-                    fprintf( file, "movq %d , %%rax", entry->info.op1->value );
-                    fprintf( file, "subq %d , %%rax ", entry->info.op2->value );
+                    fprintf( file, "movq $%d , %%rax", entry->info.op1->value );
+                    fprintf( file, "subq $%d , %%rax ", entry->info.op2->value );
                     fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
                 } else if ( entry->info.op1->flag == 5 && entry->info.op2->flag == 2 ) { //TAG_VALUE & TAG_VARIABLE
-                    fprintf( file, "movq %d ,  %%rax", entry->info.op1->value );
+                    fprintf( file, "movq $%d ,  %%rax", entry->info.op1->value );
                     fprintf( file, "subq %d(%%rbp) , %%rax ", entry->info.op2->offset );
                     fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
                 } else if ( entry->info.op1->flag == 2 && entry->info.op2->flag == 5 ) { //TAG_VARIABLE & TAG_VALUE
                     fprintf( file, "movq %d(%%rbp) ,  %%rax", entry->info.op1->offset );
-                    fprintf( file, "subq %d , %%rax ", entry->info.op2->value );
+                    fprintf( file, "subq $%d , %%rax ", entry->info.op2->value );
                     fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
                 } else { //TAG_VARIABLE & TAG_VARIABLE
                     fprintf( file, "movq %d(%%rbp) ,  %%rax", entry->info.op1->offset );
@@ -122,30 +147,29 @@ void writeAssembler(List3AdrCode list, char name[]){
                     fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
                 }
             }
-
+            */
             if ( entry->info.code == 4) { //CODE_MUL
                 if ( entry->info.op1->flag == 5 && entry->info.op2->flag == 5 ) { //TAG_VALUE & TAG_VALUE
-                    fprintf( file, "movq %d , %%rax", entry->info.op1->value );
-                    fprintf( file, "mulq %d , %%rax ", entry->info.op2->value );
-                    fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
+                    fprintf( file, "movq $%d , %%rax\n", entry->info.op1->value );
+                    fprintf( file, "imull $%d , %%rax\n", entry->info.op2->value );
+                    fprintf( file, "movq %%rax , %d(%%rbp)\n", entry->info.result->offset );
                 } else if ( entry->info.op1->flag == 5 && entry->info.op2->flag == 2 ) { //TAG_VALUE & TAG_VARIABLE
-                    fprintf( file, "movq %d ,  %%rax", entry->info.op1->value );
-                    fprintf( file, "mulq %d(%%rbp) , %%rax ", entry->info.op2->offset );
-                    fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
+                    fprintf( file, "movq $%d ,  %%rax\n", entry->info.op1->value );
+                    fprintf( file, "imull %d(%%rbp) , %%rax\n", entry->info.op2->offset );
+                    fprintf( file, "movq %%rax , %d(%%rbp)\n", entry->info.result->offset );
                 } else if ( entry->info.op1->flag == 2 && entry->info.op2->flag == 5 ) { //TAG_VARIABLE & TAG_VALUE
-                    fprintf( file, "movq %d(%%rbp) ,  %%rax", entry->info.op1->offset );
-                    fprintf( file, "mulq %d , %%rax ", entry->info.op2->value );
-                    fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
+                    fprintf( file, "movq %d(%%rbp) ,  %%rax\n", entry->info.op1->offset );
+                    fprintf( file, "imull $%d , %%rax\n", entry->info.op2->value );
+                    fprintf( file, "movq %%rax , %d(%%rbp)\n", entry->info.result->offset );
                 } else { //TAG_VARIABLE & TAG_VARIABLE
-                    fprintf( file, "movq %d(%%rbp) ,  %%rax", entry->info.op1->offset );
-                    fprintf( file, "mulq %d(%%rbp) , %%rax ", entry->info.op2->offset );
-                    fprintf( file, "movq %%rax , %d(%%rbp)", entry->info.result->offset );
+                    fprintf( file, "movq %d(%%rbp) ,  %%rax\n", entry->info.op1->offset );
+                    fprintf( file, "imull %d(%%rbp) , %%rax\n", entry->info.op2->offset );
+                    fprintf( file, "movq %%rax , %d(%%rbp)\n", entry->info.result->offset );
                 }
             }
-
-
             entry = entry->next;
         }
+        fprintf( file, "\nleave\nret" );
+        fclose( file );
     }
 }
-
