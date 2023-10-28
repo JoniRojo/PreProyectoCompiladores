@@ -33,6 +33,12 @@ struct nodeTree *tree;
 %token <cadena> ID
 %token TMENOS
 %token RETURN
+%token IF
+%token THEN
+%token ELSE
+%token INTEGER
+%token EXTERN
+%token PROGRAM
 
 %type <tree> expr
 %type <tree> VALOR
@@ -93,7 +99,9 @@ sentS: sent                 { $$ = $1; }
 
                              $$ = createTree( data_SENTS, $1, $2 );
                             }
-     ;
+
+
+    ;
 
 
 sent: ID '=' expr ';'          { int n = existSymbol( tableSym, $1 );
@@ -327,5 +335,17 @@ VALOR : INT    { Data *data_VALUE = ( Data* ) malloc ( sizeof( Data ) );
                 $$ = createNode( data_BOOLF );
                }
       ;
+
+method_decl : { type | void } ID ( paramS ) block
+
+
+paramS: param
+      | paramS param
+      ;
+
+param: type ID ;
+
+statement :
+          ;
 
 %%

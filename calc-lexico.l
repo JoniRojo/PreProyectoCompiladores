@@ -6,13 +6,12 @@
 
 #include "calc-sintaxis.tab.h"
 
-
 %}
 
 %option noyywrap
 %option yylineno
 
-letra [a-zA-Z]      
+letra [a-zA-Z]
 digito [0-9]
 
 %%
@@ -62,6 +61,42 @@ digito [0-9]
 [+*;()=]                        {printf("%s\n",yytext);
                                  return *yytext;
                                 }
+
+"void"                            {
+                                  printf("VOID: %s\n",yytext);
+                                  return VOID;
+                                  }
+
+"integer"                         {
+                                  printf("INTEGER: %s\n",yytext);
+                                  return INTEGER;
+                                  }
+
+"then"                            {
+                                  printf("THEN: %s\n",yytext);
+                                  return THEN;
+                                  }
+
+"if"                              {
+                                  printf("IF: %s\n",yytext);
+                                  return IF;
+                                  }
+
+"else"                            {
+                                  printf("ELSE: %s\n",yytext);
+                                  return ELSE;
+                                  }
+
+
+"program"                         {
+                                  printf("PROGRAM: %s\n",yytext);
+                                  return PROGRAM;
+                                  }
+
+"extern"                          {
+                                  printf("EXTERN: %s\n",yytext);
+                                  return EXTERN;
+                                  }
 
 .|\n                          ; /* ignore all the rest */
 
