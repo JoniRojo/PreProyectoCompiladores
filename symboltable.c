@@ -6,16 +6,17 @@
 #include <stdlib.h>
 
 int off = 0;
+int updLvl = 0;
 
-void insertSymbol( tableSymbol *table, Data *symbol ) {
-    nodoSymbol *new_node = ( nodoSymbol * ) malloc ( sizeof( nodoSymbol ) );
+void insertSymbol ( tableSymbol *table, Data *symbol ) {
+    nodeSymbol *new_node = ( nodeSymbol * ) malloc ( sizeof( nodeSymbol ) );
     new_node->info = symbol;
     new_node->next = NULL;
 
     if( table->head == NULL ) {
         table->head = new_node;
     } else {
-        nodoSymbol *aux = table->head;
+        nodeSymbol *aux = table->head;
         table->head = new_node;
         table->head->next = aux;
     }
@@ -25,7 +26,7 @@ int existSymbol ( tableSymbol table, char* name ) {
     if( table.head == NULL ) {
         return 0;
     } else {
-        nodoSymbol *aux = table.head;
+        nodeSymbol *aux = table.head;
         while( aux != NULL ) {
             int result = strcmp( aux->info->name, name );
             if( result == 0 ) {
@@ -37,8 +38,8 @@ int existSymbol ( tableSymbol table, char* name ) {
     return 0;
 }
 
-Data* searchSymbol( tableSymbol table, char name[] ) {
-    nodoSymbol *aux = table.head;
+Data* searchSymbol ( tableSymbol table, char name[] ) {
+    nodeSymbol *aux = table.head;
     while( aux != NULL ) {
         if( strcmp( aux->info->name, name ) == 0 ) {
             return aux->info;
@@ -53,23 +54,29 @@ int updateOffset(){
 }
 
 void printTableSymbol( tableSymbol table ) {
-    nodoSymbol *entry = table.head;
+    nodeSymbol *entry = table.head;
     while ( entry != NULL ) {
         printf( "Nombre: %s, Tipo: %d\n", entry->info->name, entry->info->offset );
         entry = entry->next;
     }
 }
 
-/*
-//Implementar
-void openLevel(){
+void insertLevel ( stackLevel *level, int lvl ) {
+    nodeStackLevel *new_node = ( nodeStackLevel * ) malloc ( sizeof( nodeStackLevel ) );
+    new_node->level = lvl;
+    new_node->table = NULL;
+    new_node->next = NULL;
+
+    if( level->head == NULL ) {
+        level->head = new_node;
+    } else {
+        nodeStackLevel *aux = level->head;
+        level->head = new_node;
+        level->head->next = aux;
+    }
 }
 
-//Implementar
-void closeLevel(){
+int updateLevel(){
+    updLvl = updLvl + 1;
+    return updLvl;
 }
-
-//Implementar
-void seachSymLevel(){
-}
-*/

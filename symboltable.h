@@ -2,23 +2,35 @@
 #define PRE_PROYECTO_SYMBOLTABLE_H
 #include "auxiliary.h"
 
-typedef struct nodoSymbol {
+typedef struct nodeSymbol {
     struct Data *info;
-    struct nodoSymbol *next;
-} nodoSymbol;
+    struct nodeSymbol *next;
+} nodeSymbol;
 
 typedef struct tableSymbol {
-    nodoSymbol *head;
+    nodeSymbol *head;
 } tableSymbol;
+
+void insertSymbol ( tableSymbol *table, Data *symbol );
+
+int existSymbol ( tableSymbol table, char* name );
+
+Data* searchSymbol ( tableSymbol table, char name[] );
 
 int updateOffset();
 
-/*
+typedef struct nodeStackLevel {
+    int level;
+    struct tableSymbol *table;
+    struct nodeStackLevel *next;
+} nodeStackLevel;
+
 typedef struct stackLevel {
-  int level;
-  tablaSimbolos *head;
-  struct stackLevel *next;
-} stackLevel ;
-*/
+    nodeStackLevel *head;
+} stackLevel;
+
+void insertLevel ( stackLevel *level, int lvl );
+
+int updateLevel();
 
 #endif //PRE_PROYECTO_SYMBOLTABLE_H
