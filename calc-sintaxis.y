@@ -10,13 +10,11 @@
 #include "threeadresscode.h"
 #include "linkedlist.h"
 #include "linkedlist.c"
-tableSymbol tableSym;
-List3AdrCode list3AdrCode;
+
+stackLevel stackSymbolTable;
+list3AdrCode listThreeAdrCode;
 FILE *name;
 FILE *assembler;
-
-stackLevel level;
-
 
 %}
 
@@ -56,25 +54,34 @@ struct nodeTree *tree;
 
 %%
 
-prog : {level.head = NULL;
-       } PROGRAM '{' var_declS  method_declS '}' ;
+prog : { stackSymbolTable.head = NULL;
+         //listThreeAdrCode.head = NULL;
+
+       } PROGRAM '{' { openLevel ( &stackSymbolTable ); } var_declS method_declS '}'
+
+       { printLevels ( &stackSymbolTable ); }
+       ;
 
 var_declS : var_decl
           | var_declS var_decl
           ;
 
-var_decl : type ID '=' expr ';' {Data *data_TID = ( Data* ) malloc ( sizeof( Data ) );
-                                 data_TID->type = $1;
-                                 data_TID->name = $2;
-                                 data_TID->flag = TAG_VARIABLE;
-                                 data_TID->offset = updateOffset();
+var_decl : type ID '=' expr ';' { int n = existInSameLevel ( &stackSymbolTable, $2 );
+                                  if ( n == 1 ) {
+                                    printf("La variable ya esta declarada\n");
+                                    exit(1);
+                                  } else {
+                                    Data *data_TID = ( Data* ) malloc ( sizeof( Data ) );
+                                    data_TID->type = $1;
+                                    data_TID->name = $2;
+                                    data_TID->flag = TAG_VARIABLE;
+                                    data_TID->offset = updateOffset();
 
-                                 nodeStackLevel *new_node = ( nodeStackLevel* ) malloc( sizeof( nodeStackLevel ) );
-                                 new_node->lvl = updateLevel();
-                                 insertSymbol(new_node->table,data_TID);
-                                 new_node->next=NULL;
-                                 insertLevel(level,new_node->level);
-                                };
+                                    insertSymbol ( &stackSymbolTable, data_TID );
+
+                                  }
+                                }
+          ;
 
 method_declS : method_decl
              | method_declS method_decl
@@ -89,10 +96,25 @@ paramS : param
        |
        ;
 
-param : type ID ;
+param : type ID { int n = existInSameLevel ( &stackSymbolTable, $2);
+                  if( n == 1 ){
+                    printf("El parametro ya existe en este nivel\n");
+                    exit(1);
+                  } else {
+                    Data *data_PARAM = (Data*) malloc ( sizeof( Data ) );
+                    data_PARAM->type = $1;
+                    data_PARAM->name = $2;
+                    data_PARAM->flag = TAG_PARAM;
+                    data_PARAM->offset = updateOffset();
 
-block : '{' var_declS  statementS '}'
-      | '{' statementS '}'
+                    insertSymbol( &stackSymbolTable, data_PARAM );
+                  }
+
+                }
+       ;
+
+block : '{' { openLevel ( &stackSymbolTable ); } var_declS  statementS '}'
+      | '{' { openLevel ( &stackSymbolTable ); } statementS '}'
       ;
 
 type : TINT { $$=0; }

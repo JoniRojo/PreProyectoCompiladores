@@ -1,36 +1,20 @@
 #ifndef PRE_PROYECTO_SYMBOLTABLE_H
 #define PRE_PROYECTO_SYMBOLTABLE_H
 #include "auxiliary.h"
+#include "linkedlist.h"
 
-typedef struct nodeSymbol {
-    struct Data *info;
-    struct nodeSymbol *next;
-} nodeSymbol;
+void insertSymbol ( stackLevel *stackSymbolTable, Data *symbol );
 
-typedef struct tableSymbol {
-    nodeSymbol *head;
-} tableSymbol;
+int existSymbol ( stackLevel *stackSymbolTable, char* name );
 
-void insertSymbol ( tableSymbol *table, Data *symbol );
+int existInSameLevel (  stackLevel *stackSymbolTable, char* name);
 
-int existSymbol ( tableSymbol table, char* name );
-
-Data* searchSymbol ( tableSymbol table, char name[] );
+Data* searchInSameLevel ( stackLevel *stackSymbolTable, char name[] );
 
 int updateOffset();
 
-typedef struct nodeStackLevel {
-    int level;
-    struct tableSymbol *table;
-    struct nodeStackLevel *next;
-} nodeStackLevel;
+void openLevel ( stackLevel *stackSymbolTable );
 
-typedef struct stackLevel {
-    nodeStackLevel *head;
-} stackLevel;
-
-void insertLevel ( stackLevel *level, int lvl );
-
-int updateLevel();
+void printLevels ( stackLevel *stackSymbolTable );
 
 #endif //PRE_PROYECTO_SYMBOLTABLE_H

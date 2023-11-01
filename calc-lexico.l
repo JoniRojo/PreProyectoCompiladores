@@ -29,9 +29,6 @@ digito [0-9]
 								 return BOOLF;
 								}
 
-"int"							{printf("TINT: %s\n",yytext);
-							     return TINT;
-							    }
 
 "bool"                          {printf("TBOOL : %s\n",yytext);
 								 return TBOOL;
@@ -54,7 +51,7 @@ digito [0-9]
                                   }
 
 "integer"                         {printf("INTEGER: %s\n",yytext);
-                                  return INTEGER;
+                                  return TINT;
                                   }
 
 "if"                              {printf("IF: %s\n",yytext);
@@ -73,7 +70,7 @@ digito [0-9]
                                   return WHILE;
                                   }
 
-"program"                         {printf("PROGRAM: %s\n",yytext);
+"Program"                         {printf("PROGRAM: %s\n",yytext);
                                   return PROGRAM;
                                   }
 
@@ -83,7 +80,7 @@ digito [0-9]
 
 {digito}+                       {printf("INT : %d\n",atoi(yytext));
                                  yylval.numero = atoi(yytext);
-                                 return INT;
+                                 return INTEGER;
                                 }
 
 {letra}({letra}|{digito})*      {yylval.cadena =(char *) malloc(sizeof(yytext)*yyleng);

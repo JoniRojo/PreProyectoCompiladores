@@ -3,17 +3,35 @@
 
 #include "threeadresscode.h"
 
-typedef struct Node3AdrCode{
+typedef struct node3AdrCode {
     threeAdressCode info;
-    struct Node3AdrCode *next;
-} Node3AdrCode;
+    struct node3AdrCode *next;
+} node3AdrCode;
 
-typedef struct List3AdrCode{
-    Node3AdrCode *head;
-} List3AdrCode;
+typedef struct list3AdrCode {
+    node3AdrCode *head;
+} list3AdrCode;
 
-void insert3AdrCode(List3AdrCode *list, threeAdressCode *info);
+typedef struct nodeSymbol {
+    struct Data *info;
+    struct nodeSymbol *next;
+} nodeSymbol;
 
-void writeAssembler(List3AdrCode list, char name[]);
+typedef struct tableSymbol {
+    nodeSymbol *head;
+} tableSymbol;
+
+typedef struct nodeStackLevel {
+    struct tableSymbol *info;
+    struct nodeStackLevel *next;
+} nodeStackLevel;
+
+typedef struct stackLevel {
+    nodeStackLevel *head;
+} stackLevel;
+
+void insert3AdrCode ( list3AdrCode *list, threeAdressCode *info );
+
+void writeAssembler ( list3AdrCode list, char name[] );
 
 #endif //PRE_PROYECTO_LINKEDLIST_H

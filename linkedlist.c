@@ -22,15 +22,15 @@ char array_code[][MAX] = { "CODE_ASSIGN",
                            "CODE_RESTA",
                            "CODE_MULT"};
 
-void insert3AdrCode(List3AdrCode *list, threeAdressCode *info){
-    Node3AdrCode  *new_node = ( Node3AdrCode* ) malloc ( sizeof( Node3AdrCode ) );
+void insert3AdrCode(list3AdrCode *list, threeAdressCode *info){
+    node3AdrCode  *new_node = ( node3AdrCode* ) malloc ( sizeof( node3AdrCode ) );
     new_node->info = *info;
     new_node->next = NULL;
 
     if ( list->head == NULL ) {
         list->head = new_node;
     } else {
-        Node3AdrCode *aux = list->head;
+        node3AdrCode *aux = list->head;
         while ( aux->next != NULL ) {
             aux = aux->next;
         }
@@ -38,8 +38,8 @@ void insert3AdrCode(List3AdrCode *list, threeAdressCode *info){
     }
 }
 
-void print3AdrCode(List3AdrCode list) {
-    Node3AdrCode *entry = list.head;
+void print3AdrCode(list3AdrCode list) {
+    node3AdrCode *entry = list.head;
     if ( entry == NULL ) {
         printf( "[]" );
     } else {
@@ -68,8 +68,8 @@ void print3AdrCode(List3AdrCode list) {
 }
 
 //gcc -S veo lo que genera
-void writeAssembler(List3AdrCode list, char name[]){
-    Node3AdrCode *entry = list.head;
+void writeAssembler ( list3AdrCode list, char name[] ) {
+    node3AdrCode *entry = list.head;
     if( entry == NULL ) {
         printf("Error: No hay decleraciones ni sentencias\n");
     } else {

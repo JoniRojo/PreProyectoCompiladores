@@ -1,3 +1,8 @@
-int x = 10;
-x = 5;
-x = 8;
+Program
+{
+    integer x = 0;
+    void main()
+    {
+        return x;
+    }
+}

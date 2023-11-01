@@ -5,6 +5,7 @@ enum Enum{
     TAG_PROG,
     TAG_ASSIGN,
     TAG_VARIABLE,
+    TAG_PARAM,
     TAG_SENT,
     TAG_EXP,
     TAG_VALUE,
