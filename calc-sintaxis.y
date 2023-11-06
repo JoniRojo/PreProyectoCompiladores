@@ -148,7 +148,16 @@ auxS : aux
 
 aux : expr ;
 
-expr : ID
+expr : ID                                 { int n = existInSameLevel ( stackSymbolTable, $1 );
+                                            if ( n == 1 ) {
+
+                                              //$$ = $1;
+
+                                            } else {
+                                              printf("La variable no esta declarada");
+                                              exit(1);
+                                            }
+                                            }
      | method_call
      | literal
      | expr '+' expr
