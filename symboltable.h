@@ -15,6 +15,8 @@ int updateOffset();
 
 void openLevel ( stackLevel *stackSymbolTable );
 
+void closeLevel ( stackLevel *stackSymbolTable );
+
 void printLevels ( stackLevel stackSymbolTable );
 
 #endif //PRE_PROYECTO_SYMBOLTABLE_H

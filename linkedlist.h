@@ -12,13 +12,13 @@ typedef struct list3AdrCode {
     node3AdrCode *head;
 } list3AdrCode;
 
-typedef struct nodeSymbol {
+typedef struct nodeTableSymbol {
     struct Data *info;
-    struct nodeSymbol *next;
-} nodeSymbol;
+    struct nodeTableSymbol *next;
+} nodeTableSymbol;
 
 typedef struct tableSymbol {
-    nodeSymbol *head;
+    nodeTableSymbol *head;
 } tableSymbol;
 
 typedef struct nodeStackLevel {

@@ -8,19 +8,16 @@
 int off = 0;
 
 void insertSymbol ( stackLevel *stackSymbolTable, Data *symbol ) {
-    nodeSymbol *new_node = ( nodeSymbol * ) malloc ( sizeof( nodeSymbol ) );
+    nodeTableSymbol *new_node = ( nodeTableSymbol * ) malloc ( sizeof( nodeTableSymbol ) );
     new_node->info = symbol;
     new_node->next = NULL;
 
     if( stackSymbolTable->head->info->head == NULL ) {
         stackSymbolTable->head->info->head = new_node;
-        nodeSymbol *aux2 = stackSymbolTable->head->info->head;
-
     } else {
-        nodeSymbol *aux = stackSymbolTable->head->info->head;
+        nodeTableSymbol *aux = stackSymbolTable->head->info->head;
         stackSymbolTable->head->info->head = new_node;
         stackSymbolTable->head->info->head->next = aux;
-        nodeSymbol *aux2 = stackSymbolTable->head->info->head;
 
     }
 }
@@ -31,7 +28,7 @@ int existSymbol ( stackLevel stackSymbolTable, char* name ) {
     } else {
         nodeStackLevel *aux = stackSymbolTable.head;
         while ( aux != NULL ) {
-            nodeSymbol *aux2 = aux->info->head;
+            nodeTableSymbol *aux2 = aux->info->head;
             while( aux2 != NULL ) {
                 int result = strcmp( aux2->info->name, name );
                 if ( result == 0 ) {
@@ -52,14 +49,14 @@ int existInSameLevel ( stackLevel stackSymbolTable, char* name ) {
     } else if ( aux->info == NULL ) {
         return 0;
     } else {
-        nodeSymbol *aux2 = stackSymbolTable.head->info->head;
+        nodeTableSymbol *aux2 = stackSymbolTable.head->info->head;
         if ( aux2 != NULL ){
-            while( aux2->head != NULL ) {
-                int result = strcmp( aux2->head->info->name, name );
+            while( aux2 != NULL ) {
+                int result = strcmp( aux2->info->name, name );
                 if ( result == 0 ) {
                     return 1;
                 }
-                aux2->head = aux2->head->next;
+                aux2 = aux2->next;
             }
         }
     }
@@ -67,7 +64,7 @@ int existInSameLevel ( stackLevel stackSymbolTable, char* name ) {
 }
 
 Data* searchInSameLevel ( stackLevel stackSymbolTable, char name[] ) {
-    nodeSymbol *aux = stackSymbolTable.head->info->head;
+    nodeTableSymbol *aux = stackSymbolTable.head->info->head;
     while( aux != NULL ) {
         if ( strcmp( aux->info->name, name ) == 0 ) {
             return aux->info;
@@ -97,6 +94,10 @@ void openLevel ( stackLevel *stackSymbolTable ) {
     }
 }
 
+void closeLevel ( stackLevel *stackSymbolTable ) {
+    stackSymbolTable->head = stackSymbolTable->head->next;
+}
+
 void printLevels ( stackLevel stackSymbolTable ) {
     int level = 0;
     nodeStackLevel *aux = stackSymbolTable.head;
@@ -104,12 +105,16 @@ void printLevels ( stackLevel stackSymbolTable ) {
         printf("Stack vacia\n");
     } else {
         while ( aux != NULL ) {
-            nodeSymbol *aux2 = aux->info->head;
+            nodeTableSymbol *aux2 = aux->info->head;
             level = level + 1;
             printf( " LEVEL %d\n", level);
-            while ( aux2 != NULL ) {
-                printf( "Nombre: %s, Tipo: %d\n", aux2->info->name, aux2->info->offset );
-                aux2 = aux2->next;
+            if ( aux2 == NULL ) {
+                printf("    Nivel vacio\n");
+            } else {
+                while ( aux2 != NULL ) {
+                    printf( "    Nombre: %s, Tipo: %d\n", aux2->info->name, aux2->info->offset );
+                    aux2 = aux2->next;
+                }
             }
             aux = aux->next;
         }

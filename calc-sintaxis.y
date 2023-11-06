@@ -57,9 +57,7 @@ struct nodeTree *tree;
 prog : { stackSymbolTable.head = NULL;
          //listThreeAdrCode.head = NULL;
 
-       } PROGRAM '{' { openLevel( &stackSymbolTable );
-       printLevels(stackSymbolTable);
-       } var_declS method_declS '}'
+       } PROGRAM '{' { openLevel( &stackSymbolTable ); } var_declS method_declS '}'
 
        { printLevels ( stackSymbolTable ); }
        ;

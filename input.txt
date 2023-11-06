@@ -1,8 +1,15 @@
 Program
 {
     integer x = 0;
+
+    void carlos(){
+        integer p = 4;
+        return p;
+    }
     void main()
     {
-        return x;
+        integer z = 14;
+        integer y = 1;
+        return y;
     }
 }
