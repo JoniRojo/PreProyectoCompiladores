@@ -9,7 +9,6 @@
 #include "threeadresscode.h"
 #include "threeadresscode.h"
 #include "linkedlist.h"
-#include "linkedlist.c"
 
 stackLevel stackSymbolTable;
 list3AdrCode listThreeAdrCode;
@@ -58,8 +57,8 @@ prog : { stackSymbolTable.head = NULL;
          //listThreeAdrCode.head = NULL;
 
        } PROGRAM '{' { openLevel( &stackSymbolTable ); } var_declS method_declS '}'
-
-       { printLevels ( stackSymbolTable ); }
+       { closeLevel( &stackSymbolTable);
+       printLevels ( stackSymbolTable ); }
        ;
 
 var_declS : var_decl
@@ -86,13 +85,16 @@ method_declS : method_decl
              | method_declS method_decl
              ;
 
-method_decl : type ID '(' paramS ')' block
-            | type ID '(' paramS ')' EXTERN ';'
+method_decl : type ID  '(' { openLevel ( &stackSymbolTable ); } paramS ')' blockorextern { closeLevel( &stackSymbolTable); }
+            | type ID '('  ')' blockorextern
             ;
+
+blockorextern : block
+              | EXTERN ';'
+              ;
 
 paramS : param
        | param ',' paramS
-       |
        ;
 
 param : type ID { int n = existInSameLevel ( stackSymbolTable, $2);
@@ -112,8 +114,8 @@ param : type ID { int n = existInSameLevel ( stackSymbolTable, $2);
                 }
        ;
 
-block : '{' { openLevel ( &stackSymbolTable ); } var_declS  statementS '}'
-      | '{' { openLevel ( &stackSymbolTable ); } statementS '}'
+block : '{' { openLevel ( &stackSymbolTable ); } var_declS  statementS '}' { closeLevel( &stackSymbolTable); }
+      | '{' { openLevel ( &stackSymbolTable ); } statementS '}' { closeLevel( &stackSymbolTable); }
       ;
 
 type : TINT { $$=0; }
@@ -146,16 +148,7 @@ auxS : aux
 
 aux : expr ;
 
-expr : ID                                 { int n = existInSameLevel ( stackSymbolTable, $1 );
-                                            if ( n == 1 ) {
-
-                                              //$$ = $1;
-
-                                            } else {
-                                              printf("La variable no esta declarada");
-                                              exit(1);
-                                            }
-                                            }
+expr : ID
      | method_call
      | literal
      | expr '+' expr

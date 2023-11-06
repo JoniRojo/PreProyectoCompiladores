@@ -2,7 +2,7 @@ Program
 {
     integer x = 0;
 
-    void carlos(){
+    void carlos(integer t){
         integer p = 4;
         return p;
     }
