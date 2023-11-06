@@ -57,16 +57,18 @@ struct nodeTree *tree;
 prog : { stackSymbolTable.head = NULL;
          //listThreeAdrCode.head = NULL;
 
-       } PROGRAM '{' { openLevel ( &stackSymbolTable ); } var_declS method_declS '}'
+       } PROGRAM '{' { openLevel( &stackSymbolTable );
+       printLevels(stackSymbolTable);
+       } var_declS method_declS '}'
 
-       { printLevels ( &stackSymbolTable ); }
+       { printLevels ( stackSymbolTable ); }
        ;
 
 var_declS : var_decl
           | var_declS var_decl
           ;
 
-var_decl : type ID '=' expr ';' { int n = existInSameLevel ( &stackSymbolTable, $2 );
+var_decl : type ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $2 );
                                   if ( n == 1 ) {
                                     printf("La variable ya esta declarada\n");
                                     exit(1);
@@ -78,7 +80,6 @@ var_decl : type ID '=' expr ';' { int n = existInSameLevel ( &stackSymbolTable, 
                                     data_TID->offset = updateOffset();
 
                                     insertSymbol ( &stackSymbolTable, data_TID );
-
                                   }
                                 }
           ;
@@ -96,7 +97,7 @@ paramS : param
        |
        ;
 
-param : type ID { int n = existInSameLevel ( &stackSymbolTable, $2);
+param : type ID { int n = existInSameLevel ( stackSymbolTable, $2);
                   if( n == 1 ){
                     printf("El parametro ya existe en este nivel\n");
                     exit(1);

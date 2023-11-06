@@ -5,16 +5,16 @@
 
 void insertSymbol ( stackLevel *stackSymbolTable, Data *symbol );
 
-int existSymbol ( stackLevel *stackSymbolTable, char* name );
+int existSymbol ( stackLevel stackSymbolTable, char* name );
 
-int existInSameLevel (  stackLevel *stackSymbolTable, char* name);
+int existInSameLevel (  stackLevel stackSymbolTable, char* name);
 
-Data* searchInSameLevel ( stackLevel *stackSymbolTable, char name[] );
+Data* searchInSameLevel ( stackLevel stackSymbolTable, char name[] );
 
 int updateOffset();
 
 void openLevel ( stackLevel *stackSymbolTable );
 
-void printLevels ( stackLevel *stackSymbolTable );
+void printLevels ( stackLevel stackSymbolTable );
 
 #endif //PRE_PROYECTO_SYMBOLTABLE_H
