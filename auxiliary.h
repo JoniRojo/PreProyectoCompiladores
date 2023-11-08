@@ -16,7 +16,7 @@ enum Enum{
     TAG_ASSIGN,
     TAG_VALUE,
     TAG_RETURN,
-    TAG_PUNTOYCOMA;
+    TAG_PUNTOYCOMA,
     TAG_SUM,
     TAG_RESTA,
     TAG_MULT
