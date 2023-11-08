@@ -112,7 +112,7 @@ void printLevels ( stackLevel stackSymbolTable ) {
                 printf("    Nivel vacio\n");
             } else {
                 while ( aux2 != NULL ) {
-                    printf( "    Nombre: %s, Tipo: %d\n", aux2->info->name, aux2->info->offset );
+                    printf( "    ID: %s, Offset: %d\n", aux2->info->name, aux2->info->offset );
                     aux2 = aux2->next;
                 }
             }
