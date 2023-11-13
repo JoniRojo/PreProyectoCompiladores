@@ -63,7 +63,7 @@ int existInSameLevel ( stackLevel stackSymbolTable, char* name ) {
     return 0;
 }
 
-Data* searchInSameLevel ( stackLevel stackSymbolTable, char name[] ) {
+    Data* searchInSameLevel ( stackLevel stackSymbolTable, char name[] ) {
     nodeTableSymbol *aux = stackSymbolTable.head->info->head;
     while( aux != NULL ) {
         if ( strcmp( aux->info->name, name ) == 0 ) {

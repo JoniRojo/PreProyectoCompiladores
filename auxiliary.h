@@ -7,7 +7,10 @@ enum Enum{
     TAG_METHOD,
     TAG_INFOMETHOD,
     TAG_METHODS,
+    TAG_VARIABLE,
     TAG_DECLS,
+    TAG_CALL,
+    TAG_EXTERN,
     TAG_PARAMS,
     TAG_BLOCK,
     TAG_IF,
@@ -19,7 +22,17 @@ enum Enum{
     TAG_PUNTOYCOMA,
     TAG_SUM,
     TAG_RESTA,
-    TAG_MULT
+    TAG_MULT,
+    TAG_DIV,
+    TAG_RESTO,
+    TAG_MENOR,
+    TAG_MAYOR,
+    TAG_EQUAL,
+    TAG_AND,
+    TAG_OR,
+    TAG_NEG,
+    TAG_NOT,
+    TAG_AUX
 };
 
 typedef struct Data {
@@ -28,7 +41,7 @@ typedef struct Data {
     int type;
     int value;
     int offset;
-    //tableSymbol *params;
+    tableSymbol *params;
 } Data;
 
 #endif //PRE_PROYECTO_AUXILIARY_H

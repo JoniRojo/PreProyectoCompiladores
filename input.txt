@@ -2,7 +2,7 @@ Program
 {
     integer x = 0;
 
-    void carlos(integer t){
+    void mifuncion (integer t){
         integer p = 4;
         return p;
     }
@@ -10,6 +10,7 @@ Program
     {
         integer z = 14;
         integer y = 1;
-        return y;
+        integer j = z + y;
+        return j;
     }
 }

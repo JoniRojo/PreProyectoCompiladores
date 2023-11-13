@@ -24,13 +24,12 @@ int numero;
 struct nodeTree *tree;
 }
 
-%token <numero> INT
+%token <numero> INTEGER
 %token <numero> BOOLF
 %token <numero> BOOLT
 %token <cadena> ID
 %token TINT
 %token TBOOL
-%token INTEGER
 %token IF
 %token THEN
 %token ELSE
@@ -50,9 +49,17 @@ struct nodeTree *tree;
 %type <tree> var_declS
 %type <tree> method_decl
 %type <tree> method_declS
+%type <tree> method_call
 %type <tree> expr
 %type <tree> param
 %type <tree> paramS
+%type <tree> blockorextern
+%type <tree> statement
+%type <tree> statementS
+%type <tree> aux
+%type <tree> auxS
+%type <tree> block
+%type <tree> literal
 
 %left AND OR
 %nonassoc '<' '>' EQUAL
@@ -65,10 +72,14 @@ struct nodeTree *tree;
 prog : {stackSymbolTable.head = NULL;
         listThreeAdrCode.head = NULL; }
         PROGRAM '{' { openLevel ( &stackSymbolTable ); } var_declS method_declS '}'
-        { nodeTree *root = createTree ( data_PROG, $5, $6 );
-        dotTree ( root, "name.dot" );
-        closeLevel( &stackSymbolTable );
-        printLevels ( stackSymbolTable );}
+        { Data *data_PROG = ( Data* ) malloc( sizeof( Data ) );
+          data_PROG->flag = TAG_PROG;
+          nodeTree *root = createTree ( data_PROG, $5, $6 );
+          dotTree ( root, "name.dot" );
+          closeLevel( &stackSymbolTable );
+          //printLevels ( stackSymbolTable );
+          printf( "No hay errores\n" );
+        }
        ;
 
 var_declS : var_decl                { $$ = $1; }
@@ -91,12 +102,12 @@ var_decl : type ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $
                                     insertSymbol ( &stackSymbolTable, data_TID );
                                     nodeTree *node_HI = createNode ( data_TID );
 
-                                     Data *data_EQUAL = ( Data* ) malloc ( sizeof ( Data ) );
-                                     data_EQUAL->flag = TAG_ASSIGN;
+                                     Data *data_ASSIGN = ( Data* ) malloc ( sizeof ( Data ) );
+                                     data_ASSIGN->flag = TAG_ASSIGN;
 
                                      if ( node_HI->info->type == $4->info->type ) {
                                         data_TID->value = $4->info->value;
-                                        $$ = createTree ( data_EQUAL, node_HI, $4 );
+                                        $$ = createTree ( data_ASSIGN, node_HI, $4 );
 
                                         //threeAdressCode  *new_tac_assign = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
                                         //new_tac_assign->code = CODE_ASSIGN;
@@ -112,7 +123,7 @@ var_decl : type ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $
                                 }
           ;
 
-method_declS : method_decl                  { $$ = $1 }
+method_declS : method_decl                  { $$ = $1; }
              | method_declS method_decl     { Data *data_METHODS = ( Data* ) malloc ( sizeof( Data ) );
                                               data_METHODS->flag = TAG_METHODS;
                                               $$ = createTree ( data_METHODS, $1, $2 );
@@ -129,19 +140,34 @@ method_decl : type ID  '(' { openLevel ( &stackSymbolTable ); } paramS ')' block
                 data_INFOMETHOD->name = $2;
                 data_INFOMETHOD->type = $1;
                 data_INFOMETHOD->offset = updateOffset();
-                data_INFOMETHOD->params = stackSymbolTable.head.info.head;
+                data_INFOMETHOD->params = stackSymbolTable.head->info;
 
+                nodeTree *node_info = createNode( data_INFOMETHOD );
+
+                $$ = createTree( data_METHOD, node_info, $7 );
                 closeLevel ( &stackSymbolTable);
-                $$ = createTree( data_METHOD, data_INFOMETHOD, $7 );
               }
             | type ID '('  ')' blockorextern
+              { Data *data_METHOD = ( Data* ) malloc ( sizeof( Data ) );
+                data_METHOD->flag = TAG_METHOD;
+                data_METHOD->offset = updateOffset();
+
+                closeLevel ( &stackSymbolTable);
+                $$ = createTree( data_METHOD, NULL, $5 );
+              }
             ;
 
-blockorextern : block           { $$ = $1 }
-              | EXTERN ';'
+blockorextern : block           { $$ = $1; }
+              | EXTERN ';'      { Data *data_EXTERN = ( Data* ) malloc ( sizeof( Data ) );
+                                  data_EXTERN->flag = TAG_EXTERN;
+
+                                  nodeTree *node_extern = createNode ( data_EXTERN );
+                                  $$ = createTree ( data_EXTERN, node_extern , NULL );
+
+                                }
               ;
 
-paramS : param                  { $$ = $1 }
+paramS : param                  { $$ = $1; }
        | param ',' paramS       { Data *data_PARAMS = ( Data* ) malloc ( sizeof( Data ) );
                                   data_PARAMS->flag = TAG_PARAMS;
                                   $$ = createTree ( data_PARAMS, $1, $3 );
@@ -156,11 +182,11 @@ param : type ID { int n = existInSameLevel ( stackSymbolTable, $2);
                     Data *data_PARAM = (Data*) malloc ( sizeof( Data ) );
                     data_PARAM->type = $1;
                     data_PARAM->name = $2;
-                    data_PARAM->flag = TAG_PARAM;
+                    data_PARAM->flag = TAG_PARAMS;
                     data_PARAM->offset = updateOffset();
 
                     insertSymbol ( &stackSymbolTable, data_PARAM );
-                    $$ = createNode(data_PA;
+                    $$ = createNode(data_PARAM);
                   }
                 }
        ;
@@ -183,9 +209,9 @@ block : '{' { openLevel ( &stackSymbolTable ); } var_declS  statementS '}'
          }
       ;
 
-type : TINT { $$=0; }
-     | TBOOL { $$=1; }
-     | VOID { $$=2; }
+type : TINT  { $$ = 0; }
+     | TBOOL { $$ = 1; }
+     | VOID  { $$ = 2; }
      ;
 
 statementS : statement                  { $$ = $1; }
@@ -202,12 +228,12 @@ statement : ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $1 );
                                 exit ( 1 );
                               } else {
                                 Data *data_symbol = searchInSameLevel ( stackSymbolTable, $1 );
-                                Data *data_EQUAL = ( Data* ) malloc ( sizeof( Data ) );
-                                data_EQUAL->flag = TAG_ASSIGN;
+                                Data *data_ASSIGN = ( Data* ) malloc ( sizeof( Data ) );
+                                data_ASSIGN->flag = TAG_ASSIGN;
                                 nodeTree *node_HI = createNode ( data_symbol );
 
-                                if(node_HI->info->type == $3->info->type){
-                                  $$ = createTree( data_EQUAL, node_HI, $3);
+                                if ( node_HI->info->type == $3->info->type ){
+                                  $$ = createTree( data_ASSIGN, node_HI, $3 );
 
                                   //threeAdressCode  *new_tac_sent = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
                                   //new_tac_sent->code = CODE_SENT;
@@ -218,11 +244,12 @@ statement : ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $1 );
                                    printf("Los types de la sentencia son diferentes\n");
                                    exit( 1 );
                                  }
+                             }
                             }
 
           | method_call ';'
 
-          | literal                                 { $$ = $1 }
+          | literal                                 { $$ = $1; }
 
           | IF '(' expr ')' THEN block              { Data *data_IF = ( Data* ) malloc ( sizeof( Data ) );
                                                       data_IF->flag = TAG_IF;
@@ -241,13 +268,13 @@ statement : ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $1 );
                                                       }
                                                     }
 
-          | WHILE '(' expr ')' block                { Data *data_WHILE = ( Data* ) malloc ( sizeof( Data ) )
+          | WHILE '(' expr ')' block                { Data *data_WHILE = ( Data* ) malloc ( sizeof( Data ) );
                                                       data_WHILE->flag = TAG_WHILE;
 
-                                                      if( $3->info->type == 1 %% $3->info->value){
+                                                      if( $3->info->type == 1 && $3->info->value == 1 ){
                                                         $$ = createTree( data_WHILE, $3, $5 );
                                                       } else {
-                                                        printf("El while nose pudo ejecutar");
+                                                        printf("El while no se pudo ejecutar\n");
                                                         exit( 1 );
                                                       }
                                                     }
@@ -286,34 +313,336 @@ statement : ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $1 );
                                                       $$ = createTree ( data_PUNTOYCOMA, NULL, NULL );
                                                     }
 
-          | block                                   { $$ = $1 }
+          | block                                   { $$ = $1; }
           ;
 
-method_call : ID '(' auxS ')' ;
+method_call : ID '(' auxS ')'  { int n = existInSameLevel ( stackSymbolTable, $1 );
 
-auxS : aux
-     | aux ',' auxS
+                                  if ( n == 1 ) {
+                                    Data *data_symbol = searchInSameLevel ( stackSymbolTable, $1 );
+                                    Data *data_CALL = ( Data* ) malloc ( sizeof( Data ) );
+                                    data_CALL->flag = TAG_CALL;
+                                    data_CALL->offset = updateOffset();
+
+                                    nodeTree *node_symbol = createNode( data_symbol );
+
+                                    $$ = createTree( data_CALL, node_symbol , $3);
+                                  } else {
+                                    printf("La funcion no esta declarada\n");
+                                    exit( 1 );
+                                  }
+                                }
+                                ;
+
+auxS : aux          { $$ = $1; }
+     | aux ',' auxS { Data *data_AUX = ( Data* ) malloc ( sizeof( Data ) );
+                      data_AUX->flag = TAG_AUX;
+                      $$ = createTree ( data_AUX, $1, $3 );
+                    }
      |
      ;
 
-aux : expr ;
+aux : expr { $$ = $1; } ;
 
-expr : ID
-     | method_call
-     | literal          { $$ = $3}
-     | expr '+' expr
-     | expr '-' expr
-     | expr '*' expr
-     | expr '/' expr
-     | expr '%' expr
-     | expr '<' expr
-     | expr '>' expr
-     | expr EQUAL expr
-     | expr AND expr
-     | expr OR expr
-     | '-' expr %prec UMINUS
-     | '!' expr %prec UMINUS
-     | '(' expr ')'
+expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
+
+                          if ( n == 1 ) {
+                            Data *data_symbol = searchInSameLevel ( stackSymbolTable, $1 );
+
+                            nodeTree *node_symbol = createNode( data_symbol );
+
+                            $$ = createTree( node_symbol );
+                          } else {
+                            printf("La variable no existe\n");
+                            exit( 1 );
+                          }
+                        }
+
+     | method_call      { $$ = $1; }
+
+     | literal          { $$ = $1; }
+
+     | expr '+' expr    { Data *data_SUM = ( Data* ) malloc ( sizeof( Data ) );
+                          data_SUM->flag = TAG_SUM;
+                          data_SUM->type = 0;
+                          data_SUM->offset = updateOffset();
+
+                          if ($1->info->type == 0 && $3->info->type == 0){
+
+                            data_SUM->value = $1->info->value + $3->info->value;
+                            $$ = createTree( data_SUM, $1, $3 );
+
+                            //threeAdressCode  *new_tac_sum = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                            //new_tac_sum->code = CODE_SUM;
+                            //new_tac_sum->op1 = $1->info;
+                            //new_tac_sum->op2 = $3->info;
+                            //new_tac_sum->result = data_SUM;
+                            //insert3AdrCode( &list3AdrCode, new_tac_sum );
+
+                          } else {
+                            printf( "Los tipos de los datos no concuerdan\n" );
+                            exit( 1 );
+                          }
+                        }
+
+     | expr '-' expr    { Data *data_TMENOS = ( Data* ) malloc ( sizeof( Data ) );
+                          data_TMENOS->flag = TAG_RESTA;
+                          data_TMENOS->type = 0;
+                          data_TMENOS->offset = updateOffset();
+
+                          if ( $1->info->type == 0 && $3->info->type == 0 ) {
+                             data_TMENOS->value = $1->info->value - $3->info->value;
+                             $$ = createTree( data_TMENOS, $1, $3);
+
+                             //threeAdressCode  *new_tac_resta = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                             //new_tac_resta->code = CODE_RESTA;
+                             //new_tac_resta->op1 = $1->info;
+                             //new_tac_resta->op2 = $3->info;
+                             //new_tac_resta->result = data_TMENOS;
+                             //insert3AdrCode( &list3AdrCode, new_tac_resta );
+
+                          } else {
+                            printf( "Los tipos de los datos no concuerdan\n" );
+                            exit(1);
+                          }
+                        }
+
+     | expr '*' expr    { Data *data_MULT = ( Data* ) malloc ( sizeof( Data ) );
+                          data_MULT->flag = TAG_MULT;
+                          data_MULT->type = 0;
+                          data_MULT->offset = updateOffset();
+
+                          if ( $1->info->type == 0 && $3->info->type == 0 ) {
+
+                            data_MULT->value = $1->info->value * $3->info->value;
+                            $$ = createTree( data_MULT, $1, $3 );
+
+                            //threeAdressCode  *new_tac_mult = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                            //new_tac_mult->code = CODE_MULT;
+                            //new_tac_mult->op1 = $1->info;
+                            //new_tac_mult->op2 = $3->info;
+                            //new_tac_mult->result = data_MULT;
+                            //insert3AdrCode( &list3AdrCode, new_tac_mult );
+
+                          } else {
+                            printf( "Los tipos de los datos no concuerdan\n" );
+                            exit( 1 );
+                          }
+                        }
+
+     | expr '/' expr    { Data *data_DIV = ( Data* ) malloc ( sizeof( Data ) );
+                          data_DIV->flag = TAG_DIV;
+                          data_DIV->type = 0;
+                          data_DIV->offset = updateOffset();
+
+                          if ( $1->info->type == 0 && $3->info->type == 0 ) {
+
+                            data_DIV->value = $1->info->value / $3->info->value;
+                            $$ = createTree( data_DIV, $1, $3 );
+
+                            //threeAdressCode  *new_tac_div = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                            //new_tac_div->code = CODE_DIV;
+                            //new_tac_div->op1 = $1->info;
+                            //new_tac_div->op2 = $3->info;
+                            //new_tac_div->result = data_DIV;
+                            //insert3AdrCode( &list3AdrCode, new_tac_div );
+
+                          } else {
+                            printf( "Los tipos de los datos no concuerdan\n" );
+                            exit( 1 );
+                          }
+                        }
+
+     | expr '%' expr    { Data *data_RESTO = ( Data* ) malloc ( sizeof( Data ) );
+                          data_RESTO->flag = TAG_RESTO;
+                          data_RESTO->type = 0;
+                          data_RESTO->offset = updateOffset();
+
+                          if ( $1->info->type == 0 && $3->info->type == 0 ) {
+
+                            data_RESTO->value = $1->info->value % $3->info->value;
+                            $$ = createTree( data_RESTO, $1, $3 );
+
+                            //threeAdressCode  *new_tac_resto = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                            //new_tac_resto->code = CODE_RESTO;
+                            //new_tac_resto->op1 = $1->info;
+                            //new_tac_resto->op2 = $3->info;
+                            //new_tac_resto->result = data_RESTO;
+                            //insert3AdrCode( &list3AdrCode, new_tac_div );
+
+                          } else {
+                            printf( "Los tipos de los datos no concuerdan\n" );
+                            exit( 1 );
+                          }
+                        }
+     | expr '<' expr    { Data *data_MENOR = ( Data* ) malloc ( sizeof( Data ) );
+                          data_MENOR->flag = TAG_MENOR;
+                          data_MENOR->type = 0;
+                          data_MENOR->offset = updateOffset();
+
+                          if ( $1->info->type == 0 && $3->info->type == 0 ) {
+
+                            if ( $1->info->value < $3->info->value ) {
+                                data_MENOR->value = 1;
+                            } else {
+                                data_MENOR->value = 0;
+                            }
+
+                            $$ = createTree( data_MENOR, $1, $3 );
+
+                            //threeAdressCode  *new_tac_menor = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                            //new_tac_menor->code = CODE_MENOR;
+                            //new_tac_menor->op1 = $1->info;
+                            //new_tac_menor->op2 = $3->info;
+                            //new_tac_menor->result = data_MENOR;
+                            //insert3AdrCode( &list3AdrCode, new_tac_menor );
+
+                          } else {
+                            printf( "Los tipos de los datos no concuerdan\n" );
+                            exit( 1 );
+                          }
+                        }
+
+     | expr '>' expr    { Data *data_MAYOR = ( Data* ) malloc ( sizeof( Data ) );
+                          data_MAYOR->flag = TAG_MAYOR;
+                          data_MAYOR->type = 0;
+                          data_MAYOR->offset = updateOffset();
+
+                          if( $1->info->type == 0 && $3->info->type == 0 ) {
+
+                            if ( $1->info->value > $3->info->value ) {
+                                data_MAYOR->value = 1;
+                            } else {
+                                data_MAYOR->value = 0;
+                            }
+
+                            $$ = createTree( data_MAYOR, $1, $3 );
+
+                            //threeAdressCode  *new_tac_menor = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                            //new_tac_menor->code = CODE_MENOR;
+                            //new_tac_menor->op1 = $1->info;
+                            //new_tac_menor->op2 = $3->info;
+                            //new_tac_menor->result = data_MENOR;
+                            //insert3AdrCode( &list3AdrCode, new_tac_menor );
+
+                          } else {
+                            printf( "Los tipos de los datos no concuerdan\n" );
+                            exit( 1 );
+                          }
+                        }
+
+     | expr EQUAL expr  { Data *data_EQUAL = ( Data* ) malloc ( sizeof( Data ) );
+                          data_EQUAL->flag = TAG_EQUAL;
+                          data_EQUAL->offset = updateOffset();
+                          data_EQUAL->type = 1;
+
+                          if ( $1->info->type == 0 && $3->info->type == 0 ) {
+                            if( $1->info->value == $3->info->value ){
+                                data_EQUAL->value = 1;
+                            } else {
+                                data_EQUAL->value = 0;
+                            }
+                          } else if( $1->info->type == 1 && $3->info->type == 1 ) {
+                            if( $1->info->value == $3->info->value ){
+                                data_EQUAL->value = 1;
+                            } else {
+                                data_EQUAL->value = 0;
+                            }
+                          } else {
+                            printf( "Los tipos de los datos no concuerdan\n" );
+                            exit( 1 );
+                          }
+                        }
+
+     | expr AND expr    { Data *data_AND = ( Data* ) malloc ( sizeof( Data ) );
+                          data_AND->flag = TAG_AND;
+                          data_AND->type = 1;
+                          data_AND->offset = updateOffset();
+
+                          if ( $1->info->type == 1 && $3->info->type == 1 ) {
+                            if ( $1->info->value == 1 && $3->info->value == 1 ) {
+                                data_AND->value = 1;
+                            } else {
+                                data_AND->value = 0;
+                            }
+
+                            $$ = createTree( data_AND, $1, $3);
+
+                            //threeAdressCode  *new_tac_and = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                            //new_tac_and->code = CODE_AND;
+                            //new_tac_and->op1 = $1->info;
+                            //new_tac_resta->op2 = $3->info;
+                            //new_tac_resta->result = data_TMENOS;
+                            //insert3AdrCode( &list3AdrCode, new_tac_resta );
+
+                          } else {
+                            printf( "Los tipos de los datos no concuerdan\n" );
+                            exit(1);
+                          }
+                        }
+
+     | expr OR expr     { Data *data_OR = ( Data* ) malloc ( sizeof( Data ) );
+                          data_OR->flag = TAG_OR;
+                          data_OR->type = 1;
+                          data_OR->offset = updateOffset();
+
+                          if ( $1->info->type == 1 && $3->info->type == 1 ) {
+                            if ( $1->info->value == 1 || $3->info->value == 1 ) {
+                               data_OR->value = 1;
+                            } else {
+                               data_OR->value = 0;
+                            }
+                            $$ = createTree( data_OR, $1, $3);
+
+                            //threeAdressCode  *new_tac_resta = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                            //new_tac_resta->code = CODE_RESTA;
+                            //new_tac_resta->op1 = $1->info;
+                            //new_tac_resta->op2 = $3->info;
+                            //new_tac_resta->result = data_TMENOS;
+                            //insert3AdrCode( &list3AdrCode, new_tac_resta );
+
+                          } else {
+                            printf( "Los tipos de los datos no concuerdan\n" );
+                            exit(1);
+                          }
+                        }
+
+     | '-' expr %prec UMINUS    { Data *data_NEG = ( Data* ) malloc ( sizeof( Data ) );
+                                  data_NEG->flag = TAG_NEG;
+                                  data_NEG->type = 0;
+                                  data_NEG->offset = updateOffset();
+
+                                  if( $2->info->type == 1 ){
+                                    if ( $2->info->value > 0 ){
+                                        data_NEG->value = $2->info->value - ( 2 * $2->info->value );
+                                    } else {
+                                        data_NEG->value = $2->info->value + ( 2 * $2->info->value );
+                                    }
+                                    $$ = createTree ( data_NEG, $2, NULL );
+                                  } else {
+                                    printf( "El tipo de los dato no concuerda\n" );
+                                    exit( 1 );
+                                  }
+                                }
+
+     | '!' expr %prec UMINUS    { Data *data_NOT = ( Data* ) malloc ( sizeof( Data ) );
+                                  data_NOT->flag = TAG_NOT;
+                                  data_NOT->type = 1;
+                                  data_NOT->offset = updateOffset();
+
+                                  if( $2->info->type == 0 ){
+                                    if ( $2->info->value == 0 ) {
+                                        data_NOT->value = 1;
+                                    } else {
+                                        data_NOT->value = 0;
+                                    }
+                                    $$ = createTree ( data_NOT, $2, NULL );
+                                  } else {
+                                    printf( "El tipo de los dato no concuerda\n" );
+                                    exit( 1 );
+                                  }
+                                }
+     | '(' expr ')'     { $$ = $2; }
      ;
 
 literal : INTEGER    { Data *data_VALUE = ( Data* ) malloc ( sizeof( Data ) );
