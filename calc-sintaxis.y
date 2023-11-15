@@ -14,6 +14,7 @@ stackLevel stackSymbolTable;
 list3AdrCode listThreeAdrCode;
 FILE *name;
 FILE *assembler;
+int typeReturn;
 
 %}
 
@@ -76,8 +77,6 @@ prog : {stackSymbolTable.head = NULL;
           data_PROG->flag = TAG_PROG;
           nodeTree *root = createTree ( data_PROG, $5, $6 );
           dotTree ( root, "name.dot" );
-          closeLevel( &stackSymbolTable );
-          //printLevels ( stackSymbolTable );
           printf( "No hay errores\n" );
         }
        ;
@@ -90,7 +89,7 @@ var_declS : var_decl                { $$ = $1; }
 
 var_decl : type ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $2 );
                                   if ( n == 1 ) {
-                                    printf("La variable ya esta declarada\n");
+                                    printf( "La variable %s ya esta declarada\n", $2);
                                     exit(1);
                                   } else {
                                     Data *data_TID = ( Data* ) malloc ( sizeof( Data ) );
@@ -102,28 +101,29 @@ var_decl : type ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $
                                     insertSymbol ( &stackSymbolTable, data_TID );
                                     nodeTree *node_HI = createNode ( data_TID );
 
-                                     Data *data_ASSIGN = ( Data* ) malloc ( sizeof ( Data ) );
-                                     data_ASSIGN->flag = TAG_ASSIGN;
+                                    Data *data_ASSIGN = ( Data* ) malloc ( sizeof ( Data ) );
+                                    data_ASSIGN->flag = TAG_ASSIGN;
 
-                                     if ( node_HI->info->type == $4->info->type ) {
-                                        data_TID->value = $4->info->value;
-                                        $$ = createTree ( data_ASSIGN, node_HI, $4 );
+                                    if ( node_HI->info->type == $4->info->type ) {
+                                       data_TID->value = $4->info->value;
+                                       $$ = createTree ( data_ASSIGN, node_HI, $4 );
 
-                                        //threeAdressCode  *new_tac_assign = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
-                                        //new_tac_assign->code = CODE_ASSIGN;
-                                        //new_tac_assign->op1 = $4->info;
-                                        //new_tac_assign->result = data_TID;
-                                        //insert3AdrCode( &list3AdrCode, new_tac_assign );
+                                       //threeAdressCode  *new_tac_assign = ( threeAdressCode* ) malloc ( sizeof( threeAdressCode ) );
+                                       //new_tac_assign->code = CODE_ASSIGN;
+                                       //new_tac_assign->op1 = $4->info;
+                                       //new_tac_assign->result = data_TID;
+                                       //insert3AdrCode( &list3AdrCode, new_tac_assign );
 
-                                     } else {
-                                        printf("Los types de la asignacion son diferentes\n");
-                                        exit ( 1 );
-                                     }
+                                    } else {
+                                       printf( "El tipo de %s difiere con la expresion que se quiere asignar\n", $2 );
+                                       exit ( 1 );
+                                    }
                                   }
                                 }
           ;
 
-method_declS : method_decl                  { $$ = $1; }
+method_declS : method_decl                  { $$ = $1;
+                                              }
              | method_declS method_decl     { Data *data_METHODS = ( Data* ) malloc ( sizeof( Data ) );
                                               data_METHODS->flag = TAG_METHODS;
                                               $$ = createTree ( data_METHODS, $1, $2 );
@@ -131,7 +131,8 @@ method_declS : method_decl                  { $$ = $1; }
              ;
 
 method_decl : type ID  '(' { openLevel ( &stackSymbolTable ); } paramS ')' blockorextern
-              { Data *data_METHOD = ( Data* ) malloc ( sizeof( Data ) );
+              { closeLevel ( &stackSymbolTable);
+                Data *data_METHOD = ( Data* ) malloc ( sizeof( Data ) );
                 data_METHOD->flag = TAG_METHOD;
                 data_METHOD->offset = updateOffset();
 
@@ -142,17 +143,15 @@ method_decl : type ID  '(' { openLevel ( &stackSymbolTable ); } paramS ')' block
                 data_INFOMETHOD->offset = updateOffset();
                 data_INFOMETHOD->params = stackSymbolTable.head->info;
 
+                insertSymbol ( &stackSymbolTable, data_INFOMETHOD );
                 nodeTree *node_info = createNode( data_INFOMETHOD );
-
                 $$ = createTree( data_METHOD, node_info, $7 );
-                closeLevel ( &stackSymbolTable);
               }
             | type ID '('  ')' blockorextern
               { Data *data_METHOD = ( Data* ) malloc ( sizeof( Data ) );
                 data_METHOD->flag = TAG_METHOD;
                 data_METHOD->offset = updateOffset();
 
-                closeLevel ( &stackSymbolTable);
                 $$ = createTree( data_METHOD, NULL, $5 );
               }
             ;
@@ -163,7 +162,6 @@ blockorextern : block           { $$ = $1; }
 
                                   nodeTree *node_extern = createNode ( data_EXTERN );
                                   $$ = createTree ( data_EXTERN, node_extern , NULL );
-
                                 }
               ;
 
@@ -176,7 +174,7 @@ paramS : param                  { $$ = $1; }
 
 param : type ID { int n = existInSameLevel ( stackSymbolTable, $2);
                   if( n == 1 ){
-                    printf("El parametro ya existe en este nivel\n");
+                    printf("El parametro %s ya existe en este nivel\n", $2 );
                     exit ( 1 );
                   } else {
                     Data *data_PARAM = (Data*) malloc ( sizeof( Data ) );
@@ -199,6 +197,7 @@ block : '{' { openLevel ( &stackSymbolTable ); } var_declS  statementS '}'
 
            $$ = createTree ( data_BLOCK, $3, $4 );
          }
+
       | '{' { openLevel ( &stackSymbolTable ); } statementS '}'
          { closeLevel ( &stackSymbolTable );
            Data *data_BLOCK = (Data*) malloc ( sizeof( Data ) );
@@ -222,12 +221,12 @@ statementS : statement                  { $$ = $1; }
                                         }
            ;
 
-statement : ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $1 );
+statement : ID '=' expr ';' { int n = existSymbol ( stackSymbolTable, $1 );
                               if ( n == 0 ) {
-                                printf( "La variable no esta declarada\n" );
+                                printf( "La variable %s no esta declarada\n", $1 );
                                 exit ( 1 );
                               } else {
-                                Data *data_symbol = searchInSameLevel ( stackSymbolTable, $1 );
+                                Data *data_symbol = searchSymbol ( stackSymbolTable, $1 );
                                 Data *data_ASSIGN = ( Data* ) malloc ( sizeof( Data ) );
                                 data_ASSIGN->flag = TAG_ASSIGN;
                                 nodeTree *node_HI = createNode ( data_symbol );
@@ -241,7 +240,7 @@ statement : ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $1 );
                                   //new_tac_sent->result = node_HI->info;
                                   //insert3AdrCode( &list3AdrCode, new_tac_sent );
                                  } else {
-                                   printf("Los types de la sentencia son diferentes\n");
+                                   printf( "El tipo de %s difiere con la expresion que se quiere asignar\n", $1 );
                                    exit( 1 );
                                  }
                              }
@@ -274,7 +273,7 @@ statement : ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $1 );
                                                       if( $3->info->type == 1 && $3->info->value == 1 ){
                                                         $$ = createTree( data_WHILE, $3, $5 );
                                                       } else {
-                                                        printf("El while no se pudo ejecutar\n");
+                                                        printf( "El while no se pudo ejecutar\n" );
                                                         exit( 1 );
                                                       }
                                                     }
@@ -301,7 +300,8 @@ statement : ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $1 );
                                                       }
                                                     }
 
-          | RETURN ';'                              { Data *data_RETURN = ( Data* ) malloc ( sizeof( Data ) );
+          | RETURN ';'                              { //printLevels ( stackSymbolTable );
+                                                      Data *data_RETURN = ( Data* ) malloc ( sizeof( Data ) );
                                                       data_RETURN->flag = TAG_RETURN;
 
                                                       $$ = createTree ( data_RETURN, NULL, NULL );
@@ -316,10 +316,9 @@ statement : ID '=' expr ';' { int n = existInSameLevel ( stackSymbolTable, $1 );
           | block                                   { $$ = $1; }
           ;
 
-method_call : ID '(' auxS ')'  { int n = existInSameLevel ( stackSymbolTable, $1 );
-
+method_call : ID '(' auxS ')'  { int n = existSymbol ( stackSymbolTable, $1 );
                                   if ( n == 1 ) {
-                                    Data *data_symbol = searchInSameLevel ( stackSymbolTable, $1 );
+                                    Data *data_symbol = searchSymbol ( stackSymbolTable, $1 );
                                     Data *data_CALL = ( Data* ) malloc ( sizeof( Data ) );
                                     data_CALL->flag = TAG_CALL;
                                     data_CALL->offset = updateOffset();
@@ -328,7 +327,7 @@ method_call : ID '(' auxS ')'  { int n = existInSameLevel ( stackSymbolTable, $1
 
                                     $$ = createTree( data_CALL, node_symbol , $3);
                                   } else {
-                                    printf("La funcion no esta declarada\n");
+                                    printf( "La funcion %s no esta declarada\n", $1 );
                                     exit( 1 );
                                   }
                                 }
@@ -339,21 +338,18 @@ auxS : aux          { $$ = $1; }
                       data_AUX->flag = TAG_AUX;
                       $$ = createTree ( data_AUX, $1, $3 );
                     }
-     |
+     |              { $$ = NULL; }
      ;
 
 aux : expr { $$ = $1; } ;
 
-expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
+expr : ID               { int n = existSymbol ( stackSymbolTable, $1 );
 
                           if ( n == 1 ) {
-                            Data *data_symbol = searchInSameLevel ( stackSymbolTable, $1 );
-
-                            nodeTree *node_symbol = createNode( data_symbol );
-
-                            $$ = createTree( node_symbol );
+                            Data *data_symbol = searchSymbol ( stackSymbolTable, $1 );
+                            $$ = createNode( data_symbol );
                           } else {
-                            printf("La variable no existe\n");
+                            printf("La variable %s no existe\n", $1 );
                             exit( 1 );
                           }
                         }
@@ -367,7 +363,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                           data_SUM->type = 0;
                           data_SUM->offset = updateOffset();
 
-                          if ($1->info->type == 0 && $3->info->type == 0){
+                          if ( $1->info->type == 0 && $3->info->type == 0 ){
 
                             data_SUM->value = $1->info->value + $3->info->value;
                             $$ = createTree( data_SUM, $1, $3 );
@@ -380,7 +376,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                             //insert3AdrCode( &list3AdrCode, new_tac_sum );
 
                           } else {
-                            printf( "Los tipos de los datos no concuerdan\n" );
+                            printf( "Los tipos de los datos de la suma no concuerdan\n" );
                             exit( 1 );
                           }
                         }
@@ -402,7 +398,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                              //insert3AdrCode( &list3AdrCode, new_tac_resta );
 
                           } else {
-                            printf( "Los tipos de los datos no concuerdan\n" );
+                            printf( "Los tipos de los datos de la resta no concuerdan\n" );
                             exit(1);
                           }
                         }
@@ -425,7 +421,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                             //insert3AdrCode( &list3AdrCode, new_tac_mult );
 
                           } else {
-                            printf( "Los tipos de los datos no concuerdan\n" );
+                            printf( "Los tipos de los datos de la multiplicación no concuerdan\n" );
                             exit( 1 );
                           }
                         }
@@ -448,7 +444,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                             //insert3AdrCode( &list3AdrCode, new_tac_div );
 
                           } else {
-                            printf( "Los tipos de los datos no concuerdan\n" );
+                            printf( "Los tipos de los datos de la division no concuerdan\n" );
                             exit( 1 );
                           }
                         }
@@ -471,7 +467,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                             //insert3AdrCode( &list3AdrCode, new_tac_div );
 
                           } else {
-                            printf( "Los tipos de los datos no concuerdan\n" );
+                            printf( "Los tipos de los datos del modulo no concuerdan\n" );
                             exit( 1 );
                           }
                         }
@@ -498,7 +494,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                             //insert3AdrCode( &list3AdrCode, new_tac_menor );
 
                           } else {
-                            printf( "Los tipos de los datos no concuerdan\n" );
+                            printf( "Los tipos de los datos del menor no concuerdan\n" );
                             exit( 1 );
                           }
                         }
@@ -526,7 +522,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                             //insert3AdrCode( &list3AdrCode, new_tac_menor );
 
                           } else {
-                            printf( "Los tipos de los datos no concuerdan\n" );
+                            printf( "Los tipos de los datos del mayor no concuerdan\n" );
                             exit( 1 );
                           }
                         }
@@ -549,7 +545,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                                 data_EQUAL->value = 0;
                             }
                           } else {
-                            printf( "Los tipos de los datos no concuerdan\n" );
+                            printf( "Los tipos de los datos de la igualdad no concuerdan\n" );
                             exit( 1 );
                           }
                         }
@@ -576,7 +572,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                             //insert3AdrCode( &list3AdrCode, new_tac_resta );
 
                           } else {
-                            printf( "Los tipos de los datos no concuerdan\n" );
+                            printf( "Los tipos de los datos del AND no concuerdan\n" );
                             exit(1);
                           }
                         }
@@ -602,7 +598,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                             //insert3AdrCode( &list3AdrCode, new_tac_resta );
 
                           } else {
-                            printf( "Los tipos de los datos no concuerdan\n" );
+                            printf( "Los tipos de los datos del OR no concuerdan\n" );
                             exit(1);
                           }
                         }
@@ -620,7 +616,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                                     }
                                     $$ = createTree ( data_NEG, $2, NULL );
                                   } else {
-                                    printf( "El tipo de los dato no concuerda\n" );
+                                    printf( "El tipo del dato de la negacion no concuerdan\n" );
                                     exit( 1 );
                                   }
                                 }
@@ -638,7 +634,7 @@ expr : ID               { int n = existInSameLevel ( stackSymbolTable, $1 );
                                     }
                                     $$ = createTree ( data_NOT, $2, NULL );
                                   } else {
-                                    printf( "El tipo de los dato no concuerda\n" );
+                                    printf( "El tipo del dato del NOT no concuerdan\n" );
                                     exit( 1 );
                                   }
                                 }

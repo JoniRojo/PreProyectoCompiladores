@@ -27,16 +27,25 @@ int existSymbol ( stackLevel stackSymbolTable, char* name ) {
         return 0;
     } else {
         nodeStackLevel *aux = stackSymbolTable.head;
-        while ( aux != NULL ) {
-            nodeTableSymbol *aux2 = aux->info->head;
-            while( aux2 != NULL ) {
-                int result = strcmp( aux2->info->name, name );
-                if ( result == 0 ) {
-                    return 1;
+        if ( aux == NULL ){
+            printf("Stack vacia\n");
+            return 0;
+        } else {
+            while (aux != NULL) {
+                nodeTableSymbol *aux2 = aux->info->head;
+                if ( aux2 == NULL ) {
+                    printf("Nivel vacio\n");
+                } else {
+                    while (aux2 != NULL) {
+                        int result = strcmp(aux2->info->name, name);
+                        if (result == 0) {
+                            return 1;
+                        }
+                        aux2 = aux2->next;
+                    }
                 }
-                aux2 = aux2->next;
+                aux = aux->next;
             }
-            aux = aux->next;
         }
     }
     return 0;
@@ -63,7 +72,7 @@ int existInSameLevel ( stackLevel stackSymbolTable, char* name ) {
     return 0;
 }
 
-    Data* searchInSameLevel ( stackLevel stackSymbolTable, char name[] ) {
+Data* searchInSameLevel ( stackLevel stackSymbolTable, char name[] ) {
     nodeTableSymbol *aux = stackSymbolTable.head->info->head;
     while( aux != NULL ) {
         if ( strcmp( aux->info->name, name ) == 0 ) {
@@ -71,6 +80,24 @@ int existInSameLevel ( stackLevel stackSymbolTable, char* name ) {
         }
         aux = aux->next;
     }
+}
+
+Data* searchSymbol ( stackLevel stackSymbolTable, char* name ) {
+        nodeStackLevel *aux = stackSymbolTable.head;
+        while (aux != NULL) {
+            nodeTableSymbol *aux2 = aux->info->head;
+            if ( aux2 == NULL ) {
+                printf("Nivel vacio\n");
+            } else {
+                while (aux2 != NULL) {
+                    if (strcmp( aux2->info->name, name ) == 0) {
+                        return aux2->info;;
+                    }
+                    aux2 = aux2->next;
+                }
+            }
+            aux = aux->next;
+        }
 }
 
 int updateOffset(){
