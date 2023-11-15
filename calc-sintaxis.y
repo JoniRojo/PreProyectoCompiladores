@@ -130,7 +130,7 @@ method_declS : method_decl                  { $$ = $1;
                                             }
              ;
 
-method_decl : type ID  '(' { openLevel ( &stackSymbolTable ); } paramS ')' blockorextern
+method_decl : type ID  '(' { openLevel ( &stackSymbolTable ); typeReturn = $1; } paramS ')' blockorextern
               { closeLevel ( &stackSymbolTable);
                 Data *data_METHOD = ( Data* ) malloc ( sizeof( Data ) );
                 data_METHOD->flag = TAG_METHOD;
@@ -146,13 +146,15 @@ method_decl : type ID  '(' { openLevel ( &stackSymbolTable ); } paramS ')' block
                 insertSymbol ( &stackSymbolTable, data_INFOMETHOD );
                 nodeTree *node_info = createNode( data_INFOMETHOD );
                 $$ = createTree( data_METHOD, node_info, $7 );
+
               }
-            | type ID '('  ')' blockorextern
+            | type ID '(' { typeReturn = $1; } ')' blockorextern
               { Data *data_METHOD = ( Data* ) malloc ( sizeof( Data ) );
                 data_METHOD->flag = TAG_METHOD;
                 data_METHOD->offset = updateOffset();
 
-                $$ = createTree( data_METHOD, NULL, $5 );
+                $$ = createTree( data_METHOD, NULL, $6 );
+
               }
             ;
 
@@ -278,7 +280,11 @@ statement : ID '=' expr ';' { int n = existSymbol ( stackSymbolTable, $1 );
                                                       }
                                                     }
 
-          | RETURN expr ';'                         { Data *data_RETURN = ( Data* ) malloc ( sizeof( Data ) );
+          | RETURN expr ';'                         { if ( $2->info->type != typeReturn ) {
+                                                        printf("El tipo que se quiere retornar no coindice con el tipo que retorna la funcion\n");
+                                                        exit ( 1 );
+                                                      }
+                                                      Data *data_RETURN = ( Data* ) malloc ( sizeof( Data ) );
                                                       data_RETURN->flag = TAG_RETURN;
                                                       data_RETURN->value = $2->info->value;
 
@@ -300,7 +306,11 @@ statement : ID '=' expr ';' { int n = existSymbol ( stackSymbolTable, $1 );
                                                       }
                                                     }
 
-          | RETURN ';'                              { //printLevels ( stackSymbolTable );
+          | RETURN ';'                              { if ( typeReturn != 2 ) {
+                                                        printf("%i",typeReturn);
+                                                        printf("La funcion no tiene de return void\n");
+                                                        exit ( 1 );
+                                                      }
                                                       Data *data_RETURN = ( Data* ) malloc ( sizeof( Data ) );
                                                       data_RETURN->flag = TAG_RETURN;
 
